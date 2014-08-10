@@ -8,11 +8,19 @@ package JsC.mvc
 	
 	public class Model extends EventDispatcher
 	{
-		private static var _obj:Object
-		
+		//private static var _model:Login;
 		public function Model()
 		{
-			
+			//_model = this
 		}
+		
+		/*public static function getInstance():Model
+		{
+			if (_model == null)
+			{
+				_model = new Model();
+			}
+			return _model;
+		}*/
 	}
 }

@@ -1,8 +1,9 @@
 package JsC.mvc
 {
+	import flash.events.EventDispatcher;
 	
 
-	public class Controller
+	public class Controller extends EventDispatcher
 	{
 	
 		protected var _model:Model

@@ -102,6 +102,9 @@ package JsC.events
 		public static const ONRIGHT:String = "ONRIGHT"
 		public static const ONTOP:String = "ONTOP"
 		public static const ONBOTTOM:String = "ONBOTTOM"	
+			
+		public static const ONSTART:String = "ONSTART"	
+		public static const ONEND:String = "ONEND"	
 		
 		
 	}

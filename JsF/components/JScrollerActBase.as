@@ -8,47 +8,53 @@ package JsF.components
 	import spark.components.BusyIndicator;
 	import spark.components.Scroller;
 	import spark.components.VGroup;
+	import spark.components.supportClasses.ScrollBarBase;
 	
 	import JsC.events.JEvent;
 	import JsC.mvc.ActionUI;
 	import JsC.sys.SystemOS;
 	
-	[Event(name="ONTOP", type="JsC.events.JEvent")]
-	[Event(name="ONBOTTOM", type="JsC.events.JEvent")]
-	public class JScrollerAct extends ActionUI
+	
+	[Event(name="ONSTART", type="JsC.events.JEvent")]
+	[Event(name="ONEND", type="JsC.events.JEvent")]
+	
+	public class JScrollerActBase extends ActionUI
 	{
-		private var scroller:Scroller;
-		private var gr:VGroup
-		private var stage:Stage
+		public var $slider:Number = 30;
 		
-		private var funcDragToTop:Function
-		private var funcDragToBottom:Function
+		protected var scroller:Scroller;
+		protected var gr:VGroup
+		protected var stage:Stage
 		
-		private var nSlider:uint = 30;
-		private var nWaiting:uint = 10;
-		private var dragWaiting:BusyIndicator
+		protected var funcDragToStart:Function
+		protected var funcDragToEnd:Function
+		
+		protected var nWaiting:uint = 10;
+		protected var dragWaiting:BusyIndicator
 		protected var bOnce:Boolean
 		
+		protected var scrollerbar:ScrollBarBase
+		protected var nRange:uint
+		
 		//*copy---------------------------------------------------------
-		private static var instance:JScrollerAct;
-		protected var view:JScroller;
+		protected var view:JScrollerV;
 		/*	public static function getInstance():JScrollerAct
 		{
 		return instance;
 		}*/
 		//-copy---------------------------------------------------------
 		
-		public function JScrollerAct(_vi:UIComponent)
+		public function JScrollerActBase(_vi:UIComponent)
 		{
 			super(_vi);
-			instance = this;
-			view = JScroller(_vi)
+			view = JScrollerV(_vi)
 			
 			scroller = view._scroller
 			gr = view._gr
 			dragWaiting = view._dragWaiting
 			stage = view.stage;
 			scroller.addEventListener(MouseEvent.MOUSE_DOWN,onScrollMouseEvent)
+				
 		}
 		
 		public function _removeAllElement():void
@@ -57,8 +63,8 @@ package JsF.components
 		}
 		public function _removeAllEvent():void
 		{
-			_removeEvent_DragToTop()
-			_removeEvent_DragToBottom()
+			_removeEvent_DragToStart()
+			_removeEvent_DragToEnd()
 		}
 		public function _stop():void
 		{
@@ -69,35 +75,49 @@ package JsF.components
 		{
 			gr.addElement(_ui)
 		}
-		public function _addEvent_DragToTop(_function:Function):void
+		
+		public function _getContent():VGroup
 		{
-			funcDragToTop = _function
-			addEventListener(JEvent.ONTOP,funcDragToTop)
+			return gr;
 		}
 		
-		public function _addEvent_DragToBottom(_function:Function):void
+		public function _getScroller():Scroller
 		{
-			funcDragToBottom = _function
-			addEventListener(JEvent.ONBOTTOM,funcDragToBottom)	
+			return scroller;
 		}
 		
 		
 		
 		
-		public function _removeEvent_DragToTop():void
+		public function _addEvent_DragToStart(_function:Function):void
 		{
-			if(funcDragToTop!=null)
+			funcDragToStart = _function
+			addEventListener(JEvent.ONSTART,funcDragToStart)
+		}
+		
+		public function _addEvent_DragToEnd(_function:Function):void
+		{
+			funcDragToEnd = _function
+			addEventListener(JEvent.ONEND,funcDragToEnd)	
+		}
+		
+		
+		
+		
+		public function _removeEvent_DragToStart():void
+		{
+			if(funcDragToStart!=null)
 			{
-				removeEventListener(JEvent.ONTOP,funcDragToTop)
-				funcDragToTop = null
+				removeEventListener(JEvent.ONSTART,funcDragToStart)
+				funcDragToStart = null
 			}
 		}
 		
-		public function _removeEvent_DragToBottom():void{
-			if(funcDragToBottom!=null)
+		public function _removeEvent_DragToEnd():void{
+			if(funcDragToEnd!=null)
 			{
-				removeEventListener(JEvent.ONBOTTOM,funcDragToBottom)
-				funcDragToBottom = null
+				removeEventListener(JEvent.ONEND,funcDragToEnd)
+				funcDragToEnd = null
 			}
 		}
 		
@@ -126,29 +146,29 @@ package JsF.components
 			dragWaiting.visible = false;
 		}
 		
+		
+		protected function getScrollerBar():ScrollBarBase
+		{
+			return scrollerbar
+		}
+		
 		protected function onScrollEnd():Boolean
 		{
 			var _bSroll:Boolean
-			if (scroller.verticalScrollBar)
+			if (getScrollerBar())
 			{
 				if (checkEnd())
 				{
-					if (!bOnce && hasEventListener(JEvent.ONBOTTOM))
+					if (!bOnce && hasEventListener(JEvent.ONEND))
 					{
-						dragWaiting.visible = true;
-						dragWaiting.top = null
-						dragWaiting.bottom = nWaiting 
-						dispatchEvent(new JEvent(JEvent.ONBOTTOM));
+						dispatchEvent(new JEvent(JEvent.ONEND));
 						bOnce = true
 					}
-				}else if(chechTop())
+				}else if(checkStart())
 				{
-					if (!bOnce && hasEventListener(JEvent.ONTOP))
+					if (!bOnce && hasEventListener(JEvent.ONSTART))
 					{
-						dragWaiting.visible = true;
-						dragWaiting.top = nWaiting
-						dragWaiting.bottom = null
-						dispatchEvent(new JEvent(JEvent.ONTOP));
+						dispatchEvent(new JEvent(JEvent.ONSTART));
 						bOnce = true
 					}
 				}else{
@@ -158,26 +178,31 @@ package JsF.components
 			return _bSroll
 		}
 		
-		private function chechTop():Boolean
+		
+		
+		
+		protected function checkStart():Boolean
 		{
 			var _b:Boolean
 			if (SystemOS.isPc)
 			{
-				_b = scroller.verticalScrollBar.value <= -nSlider
+				_b = scrollerbar.value <= -$slider
 			}else{
-				_b = scroller.verticalScrollBar.value <= -nSlider
+				_b = scrollerbar.value <= -$slider
 			}
 			return _b
 		}
 		
-		private function checkEnd():Boolean
+		
+		
+		protected function checkEnd():Boolean
 		{
 			var _b:Boolean
 			if (SystemOS.isPc)
 			{
-				_b = scroller.verticalScrollBar.value >= scroller.verticalScrollBar.maximum + nSlider
+				_b = scrollerbar.value >= scrollerbar.maximum + $slider
 			}else{
-				_b = scroller.verticalScrollBar.value >= scroller.verticalScrollBar.maximum - scroller.height + nSlider
+				_b = scrollerbar.value >= scrollerbar.maximum - nRange + $slider
 			}
 			return _b
 		}

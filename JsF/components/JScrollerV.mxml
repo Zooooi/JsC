@@ -4,7 +4,7 @@
 		 >
 	<fx:Style source="JsF/configs/JScroller.css"/>
 	<s:Scroller id="_scroller" styleName="scroller" width="100%" height="100%">
-		<s:HGroup id="_gr" styleName="group" width="100%" height="100%" />
+		<s:VGroup id="_gr" styleName="group" width="100%" height="100%" />
 	</s:Scroller>
 	<s:BusyIndicator id="_dragWaiting" horizontalCenter="0" visible="false" width="50" height="50"/>
 </s:Group>

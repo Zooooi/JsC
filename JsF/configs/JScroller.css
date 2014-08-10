@@ -1,0 +1,5 @@
+/* CSS file */
+@namespace s "library://ns.adobe.com/flex/spark";
+
+.scroller{left:5px;right:5px;}
+.group{horizontalAlign:center;horizontalCenter:0;verticalAlign:middle;}
