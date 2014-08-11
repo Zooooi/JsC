@@ -1,12 +1,12 @@
-package JsF.components
+package JsF.components.act
 {
 	import flash.events.MouseEvent;
+	
 	import mx.core.UIComponent;
 	
-	
-	public class JScrollerActV2 extends JScrollerActV
+	public class JScrollerActH2 extends JScrollerActH
 	{
-		public function JScrollerActV2(_vi:UIComponent)
+		public function JScrollerActH2(_vi:UIComponent)
 		{
 			super(_vi);
 		}
@@ -16,11 +16,9 @@ package JsF.components
 			var b:Boolean = super.onScrollEnd();
 			if (bOnce)
 			{
-				view.stage.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_UP));
+				stage.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_UP));
 			}
 			return super.onScrollEnd();
 		}
-		
-		
 	}
 }

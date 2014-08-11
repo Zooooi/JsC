@@ -1,11 +1,13 @@
-package JsF.components
+package JsF.components.act
 {
 	import flash.display.Stage;
+	import flash.events.Event;
 	import flash.events.MouseEvent;
 	
 	import mx.core.UIComponent;
 	
-	import spark.components.BusyIndicator;
+	import spark.components.Group;
+	import spark.components.HGroup;
 	import spark.components.Scroller;
 	import spark.components.VGroup;
 	import spark.components.supportClasses.ScrollBarBase;
@@ -14,46 +16,60 @@ package JsF.components
 	import JsC.mvc.ActionUI;
 	import JsC.sys.SystemOS;
 	
+	import JsF.components.JScrollerH;
+	import JsF.components.JScrollerV;
+	
 	
 	[Event(name="ONSTART", type="JsC.events.JEvent")]
 	[Event(name="ONEND", type="JsC.events.JEvent")]
+	[Event(name="READY", type="JsC.events.JEvent")]
 	
 	public class JScrollerActBase extends ActionUI
 	{
 		public var $slider:Number = 30;
 		
 		protected var scroller:Scroller;
-		protected var gr:VGroup
+		
 		protected var stage:Stage
 		
-		protected var funcDragToStart:Function
-		protected var funcDragToEnd:Function
-		
 		protected var nWaiting:uint = 10;
-		protected var dragWaiting:BusyIndicator
+		
 		protected var bOnce:Boolean
 		
 		protected var scrollerbar:ScrollBarBase
 		protected var nRange:uint
 		
-		//*copy---------------------------------------------------------
-		protected var view:JScrollerV;
-		/*	public static function getInstance():JScrollerAct
-		{
-		return instance;
-		}*/
-		//-copy---------------------------------------------------------
+		protected var gr:Group
+		protected var scrollerV:JScrollerV;
+		protected var scrollerH:JScrollerH;
+		
 		
 		public function JScrollerActBase(_vi:UIComponent)
 		{
 			super(_vi);
-			view = JScrollerV(_vi)
 			
-			scroller = view._scroller
-			gr = view._gr
-			dragWaiting = view._dragWaiting
-			stage = view.stage;
+			if (_vi is JScrollerV)
+			{
+				
+				scrollerV = JScrollerV(_vi)
+				scroller = scrollerV._scroller
+				gr = scrollerV._gr
+					
+			}else if (_vi is JScrollerH){
+				
+				scrollerH = JScrollerH(_vi)
+				scroller = scrollerH._scroller
+				gr = scrollerH._gr
+					
+			}else{
+				return
+			}
+			
+			
 			scroller.addEventListener(MouseEvent.MOUSE_DOWN,onScrollMouseEvent)
+			scroller.addEventListener(Event.ADDED_TO_STAGE,function(event:Event):void{
+				stage = event.currentTarget.stage
+			})
 				
 		}
 		
@@ -61,11 +77,7 @@ package JsF.components
 		{
 			gr.removeAllElements();
 		}
-		public function _removeAllEvent():void
-		{
-			_removeEvent_DragToStart()
-			_removeEvent_DragToEnd()
-		}
+		
 		public function _stop():void
 		{
 			stage.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_UP));
@@ -76,9 +88,14 @@ package JsF.components
 			gr.addElement(_ui)
 		}
 		
-		public function _getContent():VGroup
+		public function _getContentV():VGroup
 		{
-			return gr;
+			return VGroup(gr);
+		}
+		
+		public function _getContentH():HGroup
+		{
+			return HGroup(gr);
 		}
 		
 		public function _getScroller():Scroller
@@ -88,40 +105,6 @@ package JsF.components
 		
 		
 		
-		
-		public function _addEvent_DragToStart(_function:Function):void
-		{
-			funcDragToStart = _function
-			addEventListener(JEvent.ONSTART,funcDragToStart)
-		}
-		
-		public function _addEvent_DragToEnd(_function:Function):void
-		{
-			funcDragToEnd = _function
-			addEventListener(JEvent.ONEND,funcDragToEnd)	
-		}
-		
-		
-		
-		
-		public function _removeEvent_DragToStart():void
-		{
-			if(funcDragToStart!=null)
-			{
-				removeEventListener(JEvent.ONSTART,funcDragToStart)
-				funcDragToStart = null
-			}
-		}
-		
-		public function _removeEvent_DragToEnd():void{
-			if(funcDragToEnd!=null)
-			{
-				removeEventListener(JEvent.ONEND,funcDragToEnd)
-				funcDragToEnd = null
-			}
-		}
-		
-		
 		protected function onScrollMouseEvent(event:MouseEvent):void
 		{
 			switch(event.type)
@@ -129,7 +112,7 @@ package JsF.components
 				case MouseEvent.MOUSE_DOWN:
 					bOnce = false;
 					scroller.addEventListener(MouseEvent.MOUSE_MOVE,onScrollMouseEvent)
-					if (!onScrollEnd())view.stage.addEventListener(MouseEvent.MOUSE_UP,onStageMouseEvent)
+					if (!onScrollEnd())stage.addEventListener(MouseEvent.MOUSE_UP,onStageMouseEvent)
 					break;
 				case MouseEvent.MOUSE_MOVE:
 					onScrollEnd()
@@ -142,8 +125,8 @@ package JsF.components
 		{
 			//onScrollEnd()
 			scroller.removeEventListener(MouseEvent.MOUSE_MOVE,onScrollMouseEvent)
-			view.stage.removeEventListener(MouseEvent.MOUSE_UP,onStageMouseEvent)
-			dragWaiting.visible = false;
+			stage.removeEventListener(MouseEvent.MOUSE_UP,onStageMouseEvent)
+			//dispatchEvent(new JEvent(JEvent.READY));
 		}
 		
 		
@@ -172,7 +155,7 @@ package JsF.components
 						bOnce = true
 					}
 				}else{
-					dragWaiting.visible = false;
+					dispatchEvent(new JEvent(JEvent.READY));
 				}
 			}
 			return _bSroll
