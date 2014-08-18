@@ -23,18 +23,20 @@ package JsF.components.act
 		
 		protected function onWaitingEvent(event:JEvent):void
 		{
+			
+			
 			switch(event.type)
 			{
 				case JEvent.ONSTART:
 					dragWaiting.visible = true;
-					dragWaiting.right = nWaiting
-					dragWaiting.left = null
+					dragWaiting.left = nWaiting
+					dragWaiting.right = null 
 					break;
 				
 				case JEvent.ONEND:
 					dragWaiting.visible = true;
+					dragWaiting.right = nWaiting
 					dragWaiting.left = null
-					dragWaiting.right = nWaiting 
 					break;
 				
 				case JEvent.READY:
@@ -47,7 +49,7 @@ package JsF.components.act
 		
 		override protected function getScrollerBar():ScrollBarBase
 		{
-			scrollerbar = scroller.verticalScrollBar
+			scrollerbar = scroller.horizontalScrollBar
 			return scrollerbar
 		}
 	}

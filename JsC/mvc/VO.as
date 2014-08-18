@@ -13,7 +13,15 @@ package JsC.mvc
 		{
 			for (var i:* in obj)
 			{
-				this[i] = obj[i]
+				try
+				{
+					this[i] = obj[i]
+				} 
+				catch(error:Error) 
+				{
+					
+				}
+				
 			}
 		}
 		

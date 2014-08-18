@@ -1,11 +1,14 @@
 package JsF.components.act
 {
 	import flash.display.Stage;
+	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.events.TimerEvent;
 	import flash.utils.Timer;
+	import flash.utils.clearInterval;
+	import flash.utils.setInterval;
 	
 	import mx.core.UIComponent;
-	import mx.events.FlexEvent;
 	import mx.events.PropertyChangeEvent;
 	
 	import spark.components.Group;
@@ -29,12 +32,7 @@ package JsF.components.act
 	public class JScrollerActBase extends ActionUI
 	{
 		public var $slider:Number = 30;
-		/**
-		 * 模式分類true未做好 
-		 */		
-		public var $mode:Boolean = false
-		
-		
+
 		protected var scroller:Scroller;
 		
 		protected var stage:Stage
@@ -57,6 +55,7 @@ package JsF.components.act
 		public function JScrollerActBase(_vi:UIComponent)
 		{
 			super(_vi);
+			
 			if (_vi is JScrollerV)
 			{
 				scrollerV = JScrollerV(_vi)
@@ -69,14 +68,13 @@ package JsF.components.act
 			}else{
 				return
 			}
-			scroller.viewport.addEventListener(FlexEvent.UPDATE_COMPLETE,onCheckScrolling)
-			scroller.addEventListener(MouseEvent.MOUSE_DOWN,onScrollMouseEvent)
 			
-		}
 		
-		protected function onScrollMouseEvent(event:MouseEvent):void
-		{
-			bOnce = false
+			scroller.addEventListener(MouseEvent.MOUSE_DOWN,onScrollMouseEvent)
+			scroller.addEventListener(Event.ADDED_TO_STAGE,function(event:Event):void{
+				stage = event.currentTarget.stage
+			})
+			
 		}
 		
 		public function _removeAllElement():void
@@ -111,25 +109,51 @@ package JsF.components.act
 		
 		
 		
+		protected function onScrollMouseEvent(event:MouseEvent):void
+		{
+			switch(event.type)
+			{
+				case MouseEvent.MOUSE_DOWN:
+					bOnce = false;
+					scroller.addEventListener(MouseEvent.MOUSE_MOVE,onScrollMouseEvent)
+					stage.addEventListener(MouseEvent.MOUSE_UP,onStageMouseEvent)
+					break;
+				case MouseEvent.MOUSE_MOVE:
+					
+					onCheckScrolling()
+					break
+			}
+		}	
+		
+		
+		protected function onStageMouseEvent(event:MouseEvent):void
+		{
+			scroller.removeEventListener(MouseEvent.MOUSE_MOVE,onScrollMouseEvent)
+			stage.removeEventListener(MouseEvent.MOUSE_UP,onStageMouseEvent)
+		}
+		
+		
 		protected function getScrollerBar():ScrollBarBase
 		{
 			return scrollerbar
 		}
 		
-		protected function onCheckScrolling(event:FlexEvent):void
+		protected function onCheckScrolling():void
 		{
 			if (getScrollerBar())
 			{
 				if (checkEnd())
 				{
-					if (!bOnce)
+					
+					if (!bOnce && hasEventListener(JEvent.ONEND))
 					{
 						dispatchEvent(new JEvent(JEvent.ONEND));
 						bOnce = true
 					}
 				}else if(checkStart())
 				{
-					if (!bOnce)
+					
+					if (!bOnce && hasEventListener(JEvent.ONSTART))
 					{
 						dispatchEvent(new JEvent(JEvent.ONSTART));
 						bOnce = true
@@ -137,6 +161,8 @@ package JsF.components.act
 				}
 			}
 		}
+		
+		
 		
 		
 		protected function checkStart():Boolean
@@ -164,7 +190,13 @@ package JsF.components.act
 			}
 			return _b
 		}
-	
+		
+		
+		protected function onStopScroll():void
+		{
+			
+			
+		}
 	}
 }
 
