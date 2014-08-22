@@ -6,7 +6,6 @@ package JsF.components.act
 	
 	import mx.core.UIComponent;
 	import mx.events.FlexEvent;
-	import mx.events.PropertyChangeEvent;
 	
 	import spark.components.Group;
 	import spark.components.HGroup;
@@ -20,6 +19,7 @@ package JsF.components.act
 	
 	import JsF.components.JScrollerH;
 	import JsF.components.JScrollerV;
+	import JsF.components.rebuilder.Scroller_ex;
 	
 	
 	[Event(name="ONSTART", type="JsC.events.JEvent")]
@@ -29,13 +29,8 @@ package JsF.components.act
 	public class JScrollerActBase extends ActionUI
 	{
 		public var $slider:Number = 30;
-		/**
-		 * 模式分類true未做好 
-		 */		
-		public var $mode:Boolean = false
 		
-		
-		protected var scroller:Scroller;
+		protected var scroller:Scroller_ex;
 		
 		protected var stage:Stage
 		
@@ -59,13 +54,31 @@ package JsF.components.act
 			super(_vi);
 			if (_vi is JScrollerV)
 			{
+				
 				scrollerV = JScrollerV(_vi)
 				scroller = scrollerV._scroller
 				gr = scrollerV._gr
+					
+				if(SystemOS.isPc)
+				{
+					nRange = 0
+				}else{
+					nRange = scroller.height
+				}
+				
 			}else if (_vi is JScrollerH){
+				
 				scrollerH = JScrollerH(_vi)
 				scroller = scrollerH._scroller
 				gr = scrollerH._gr
+				
+				if(SystemOS.isPc)
+				{
+					nRange = 0
+				}else{
+					nRange = scroller.width
+				}
+				
 			}else{
 				return
 			}
@@ -86,12 +99,17 @@ package JsF.components.act
 		
 		public function _stop():void
 		{
-			stage.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_UP));
+			scroller.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_UP));
 		}
 		
 		public function _addElement(_ui:UIComponent):void
 		{
 			gr.addElement(_ui)
+		}
+		
+		public function _getContent():Group
+		{
+			return gr;
 		}
 		
 		public function _getContentV():VGroup
@@ -104,7 +122,7 @@ package JsF.components.act
 			return HGroup(gr);
 		}
 		
-		public function _getScroller():Scroller
+		public function _getScroller():Scroller_ex
 		{
 			return scroller;
 		}
@@ -124,6 +142,7 @@ package JsF.components.act
 				{
 					if (!bOnce)
 					{
+						reclick()
 						dispatchEvent(new JEvent(JEvent.ONEND));
 						bOnce = true
 					}
@@ -131,6 +150,7 @@ package JsF.components.act
 				{
 					if (!bOnce)
 					{
+						reclick()
 						dispatchEvent(new JEvent(JEvent.ONSTART));
 						bOnce = true
 					}
@@ -139,32 +159,24 @@ package JsF.components.act
 		}
 		
 		
+		private function reclick():void
+		{
+			_stop()
+			dispatchEvent(new MouseEvent(MouseEvent.MOUSE_DOWN))
+		}
+		
 		protected function checkStart():Boolean
 		{
-			var _b:Boolean
-			if (SystemOS.isPc)
-			{
-				_b = scrollerbar.value <= scrollerbar.minimum - $slider
-			}else{
-				_b = scrollerbar.value <= scrollerbar.minimum + nRange - $slider
-			}
-			return _b
+			return scrollerbar.value <= scrollerbar.minimum + nRange - $slider
 		}
 		
 		
 		
 		protected function checkEnd():Boolean
 		{
-			var _b:Boolean
-			if (SystemOS.isPc)
-			{
-				_b = scrollerbar.value >= scrollerbar.maximum + $slider
-			}else{
-				_b = scrollerbar.value >= scrollerbar.maximum - nRange + $slider
-			}
-			return _b
+			return scrollerbar.value >= scrollerbar.maximum - nRange + $slider
 		}
-	
+		
 	}
 }
 

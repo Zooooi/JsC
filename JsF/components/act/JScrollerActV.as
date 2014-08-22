@@ -15,7 +15,6 @@ package JsF.components.act
 		public function JScrollerActV(_vi:UIComponent)
 		{
 			super(_vi);
-			nRange = scroller.height
 			dragWaiting = scrollerV._dragWaiting
 			addEventListener(JEvent.ONSTART,onWaitingEvent)
 			addEventListener(JEvent.ONEND,onWaitingEvent)

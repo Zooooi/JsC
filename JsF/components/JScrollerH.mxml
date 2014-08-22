@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
-		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:s="library://ns.adobe.com/flex/spark" xmlns:rebuilder="JsF.components.rebuilder.*"
 		 >
 	<fx:Style source="JsF/configs/JScroller.css"/>
-	<s:Scroller id="_scroller" styleName="scroller" width="100%" height="100%" verticalScrollPolicy="off">
+	
+	<rebuilder:Scroller_ex id="_scroller" styleName="scroller" width="100%" height="100%" verticalScrollPolicy="off">
 		<s:HGroup id="_gr" styleName="group" width="100%" height="100%" />
-	</s:Scroller>
+		</rebuilder:Scroller_ex>
 	<s:BusyIndicator id="_dragWaiting" verticalCenter="0" visible="false" width="30" height="30"/>
 </s:Group>
