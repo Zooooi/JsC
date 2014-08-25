@@ -1,20 +1,13 @@
 package JsC.mvc
 {
-	import flash.events.EventDispatcher;
-	
 	import mx.core.UIComponent;
 	
-	public class ActionUIBase extends EventDispatcher
+	public class ActionUIBase extends ActBase
 	{
-		protected var me:;
 		protected var vi:UIComponent;
 		public function ActionUIBase()
 		{
 			
-		}
-		public function _getCtrl():ActionUI
-		{
-			return me;
 		}
 		public function _getView():UIComponent
 		{
@@ -24,7 +17,5 @@ package JsC.mvc
 		{
 			vi = _vi;
 		}
-		
-		
 	}
 }

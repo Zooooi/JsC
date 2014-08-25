@@ -67,7 +67,6 @@ viewport property to link them together.
 				graphics.beginFill(0);
 				graphics.drawRect(0, 0, width, height);
 				graphics.endFill();
-				
 				return needUpdate;
 			}
 			
@@ -98,9 +97,8 @@ viewport property to link them together.
 		when there is too much data to fit horizontally in a display area.
 		The Scroller determines whether the horizontal ScrollBar is visible. -->
 		<fx:Component  id="horizontalScrollBarFactory">
-			<s:HScrollBar visible="false"  />
+			<s:HScrollBar skinClass="JsF.components.skin.JScrollerHideScrollbarSkin_HScrollBar"/>
 		</fx:Component> 
-		<!--skinClass="JsF.components.skin.JScrollerHideScrollbarSkin_HScrollBar"-->
 	</fx:Declarations>
 	
 </s:SparkSkin>

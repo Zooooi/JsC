@@ -7,27 +7,26 @@ package JsF.components.act
 	
 	import spark.components.Group;
 	import spark.components.HGroup;
-	import spark.components.Scroller;
 	import spark.components.VGroup;
 	
 	import JsC.events.JEvent;
-	import JsC.mvc.ActionUI;
+	import JsC.mvc.Controller;
 	
 	import JsF.components.rebuilder.Scroller_ex;
 	
 	
 	[Event(name="REMOVE", type="JsC.events.JEvent")]
 	[Event(name="ALLCOMPLETE", type="JsC.events.JEvent")]
-	public class JScrollerDragPageBase extends ActionUI implements IScrollerDragePage
+	
+	
+	public class JScrollerCtrlDragPage extends Controller implements IScrollerDragePage
 	{
 		
+		protected const actNormal:String = "actNormal"
 		protected const actInit:String = "actInit"
 		protected const actNext:String = "actNext"
 		protected const actPrev:String = "actPrev"
 		protected var act:String = actInit	
-		
-		protected var cUpdate:uint = 25
-		protected var cChange:uint = 75
 		
 		protected var scroller:Scroller_ex
 		protected var scrollerCtrl:JScrollerActBase
@@ -43,22 +42,31 @@ package JsF.components.act
 		private var nUpdate_debug:uint;
 		private var nInterval:uint
 		private var nValue:Number
+		protected var aniScroll:JScrollerAni
 		
-		private var sKind:String
-		public function JScrollerDragPageBase(_ctrl:JScrollerActBase) 
+		public function JScrollerCtrlDragPage(_ctrl:JScrollerActBase) 
 		{
 			scrollerCtrl = _ctrl;
 			scroller = scrollerCtrl._getScroller()
 			grContent = _ctrl._getContent()
+			aniScroll = new JScrollerAni
 			
 			if (grContent is VGroup)
 			{
+				aniScroll.verticalScroll([grContent.layout])
 				addEventListener(JEvent.REMOVE,onVAddEvent)
 				addEventListener(JEvent.ALLCOMPLETE,function():void{scroller.verticalScrollBar.viewport.verticalScrollPosition = nValue;})
 			}else{
+				aniScroll.horizontalScroll([grContent.layout])
 				addEventListener(JEvent.REMOVE,onHAddEvent)
 				addEventListener(JEvent.ALLCOMPLETE,function():void{scroller.horizontalScrollBar.viewport.horizontalScrollPosition = nValue;})
 			}
+		}
+		
+		protected function aniScrollTo(_offset:Number):void
+		{
+			aniScroll.setValue(_offset)
+			aniScroll.play()
 		}
 		
 		protected function onHAddEvent(event:JEvent):void
@@ -121,6 +129,12 @@ package JsF.components.act
 			act = actPrev
 		}
 		
+		public function load():void
+		{
+			nCount = 0;
+			act = actNormal
+		}
+		
 		
 		protected function addItem(_start:uint,_end:uint):void
 		{
@@ -128,19 +142,18 @@ package JsF.components.act
 			var addFunc:Function 
 			switch(act)
 			{
-				case actNext:
-				case actInit:
-					addFunc = function(_item:UIComponent,_index:uint):void
-					{
-						grContent.addElement(_item)
-					}
-					break;
 				case actPrev:
 					addFunc = function(_item:UIComponent,_index:uint):void
 					{
 						grContent.addElementAt(_item,nLength-(nLength-(i-_start)));
 					}
 					break
+				default:
+					addFunc = function(_item:UIComponent,_index:uint):void
+					{
+						grContent.addElement(_item)
+					}
+					break;
 			}
 			
 			for (var i:int = _start; i <_end; i++) 
@@ -150,9 +163,13 @@ package JsF.components.act
 				{
 					_item.addEventListener(FlexEvent.CREATION_COMPLETE,onItemEvent)
 				}
-				_item.addEventListener(Event.REMOVED_FROM_STAGE,onItemEvent)
+				if (act != actNormal)
+				{
+					_item.addEventListener(Event.REMOVED_FROM_STAGE,onItemEvent)
+				}
 				addFunc(_item,i)
 			}
+		
 		}
 		
 		
@@ -182,7 +199,7 @@ package JsF.components.act
 			dispatchEvent(new JEvent(JEvent.ALLCOMPLETE));
 			scrollerCtrl.dispatchEvent(new JEvent(JEvent.READY))
 		}
-	
+		
 		
 		protected function onItemEvent(event:Event):void
 		{
@@ -190,7 +207,25 @@ package JsF.components.act
 			{
 				case FlexEvent.CREATION_COMPLETE:
 					nCount++;
-					if (nCount == nLength) delItem();
+					if (nCount == nLength)
+					{
+						switch(act)
+						{
+							case actNormal:
+								if (scroller.verticalScrollBar)
+								{
+									scroller.viewport.verticalScrollPosition = 0
+								}else if(scroller.horizontalScrollBar)
+								{
+									scroller.viewport.horizontalScrollPosition = 0
+								}
+								scrollerCtrl.dispatchEvent(new JEvent(JEvent.READY))
+								break;
+							default:
+								delItem();
+								break;
+						}
+					}
 					break;
 				
 				case Event.REMOVED_FROM_STAGE:
@@ -213,3 +248,7 @@ package JsF.components.act
 		
 	}
 }
+
+
+
+

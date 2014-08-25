@@ -1,9 +1,7 @@
 package JsC.mvc
 {
-	import flash.events.EventDispatcher;
-	
 
-	public class Controller extends EventDispatcher
+	public class Controller extends ActBase
 	{
 	
 		protected var _model:Model
@@ -17,5 +15,7 @@ package JsC.mvc
 		{
 			return _model;
 		}
+		
+		
 	}
 }

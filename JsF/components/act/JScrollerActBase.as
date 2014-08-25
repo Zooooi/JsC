@@ -9,7 +9,6 @@ package JsF.components.act
 	
 	import spark.components.Group;
 	import spark.components.HGroup;
-	import spark.components.Scroller;
 	import spark.components.VGroup;
 	import spark.components.supportClasses.ScrollBarBase;
 	
@@ -78,7 +77,6 @@ package JsF.components.act
 				}else{
 					nRange = scroller.width
 				}
-				
 			}else{
 				return
 			}
@@ -131,6 +129,7 @@ package JsF.components.act
 		
 		protected function getScrollerBar():ScrollBarBase
 		{
+			
 			return scrollerbar
 		}
 		
@@ -162,7 +161,6 @@ package JsF.components.act
 		private function reclick():void
 		{
 			_stop()
-			dispatchEvent(new MouseEvent(MouseEvent.MOUSE_DOWN))
 		}
 		
 		protected function checkStart():Boolean
