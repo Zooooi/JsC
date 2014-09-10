@@ -17,5 +17,8 @@ package JsC.mvc
 		{
 			vi = _vi;
 		}
+		
+		
+		
 	}
 }

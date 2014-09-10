@@ -35,7 +35,7 @@ package JsF.components.act
 		
 		protected var nWaiting:uint = 10;
 		
-		protected var bOnce:Boolean
+		private var bOnce:Boolean = true
 		
 		protected var scrollerbar:ScrollBarBase
 		protected var nRange:uint
@@ -48,16 +48,42 @@ package JsF.components.act
 		protected var nTimer:Timer
 		protected var nInterval:uint
 		
+		private var checkStart:Function
+		private var checkEnd:Function
+		
 		public function JScrollerActBase(_vi:UIComponent)
 		{
 			super(_vi);
 			if (_vi is JScrollerV)
 			{
-				
 				scrollerV = JScrollerV(_vi)
 				scroller = scrollerV._scroller
 				gr = scrollerV._gr
-					
+				reset()
+				checkStart = function():Boolean{return scroller.viewport.verticalScrollPosition < 0  - $slider}	
+				checkEnd = function():Boolean{return scroller.viewport.verticalScrollPosition > gr.layout.target.contentHeight - nRange + $slider}	
+				
+			}else if (_vi is JScrollerH){
+				
+				scrollerH = JScrollerH(_vi)
+				scroller = scrollerH._scroller
+				gr = scrollerH._gr
+				reset()
+				checkStart = function():Boolean{return scroller.viewport.horizontalScrollPosition < 0  - $slider}	
+				checkEnd = function():Boolean{return scroller.viewport.horizontalScrollPosition > gr.layout.target.contentWidth - nRange + $slider}	
+			}else{
+				return
+			}
+			scroller.viewport.addEventListener(FlexEvent.UPDATE_COMPLETE,onCheckScrolling)
+			scroller.addEventListener(MouseEvent.MOUSE_DOWN,onScrollMouseEvent)
+		}
+		
+		
+		private  function reset():void
+		{
+			if (vi is JScrollerV)
+			{
+				
 				if(SystemOS.isPc)
 				{
 					nRange = 0
@@ -65,11 +91,8 @@ package JsF.components.act
 					nRange = scroller.height
 				}
 				
-			}else if (_vi is JScrollerH){
-				
-				scrollerH = JScrollerH(_vi)
-				scroller = scrollerH._scroller
-				gr = scrollerH._gr
+				nRange = scroller.height
+			}else if (vi is JScrollerH){
 				
 				if(SystemOS.isPc)
 				{
@@ -77,17 +100,12 @@ package JsF.components.act
 				}else{
 					nRange = scroller.width
 				}
-			}else{
-				return
+				nRange = scroller.width
 			}
-			scroller.viewport.addEventListener(FlexEvent.UPDATE_COMPLETE,onCheckScrolling)
-			scroller.addEventListener(MouseEvent.MOUSE_DOWN,onScrollMouseEvent)
-			
 		}
-		
 		protected function onScrollMouseEvent(event:MouseEvent):void
 		{
-			bOnce = false
+			openCheckEvent()
 		}
 		
 		public function _removeAllElement():void
@@ -124,37 +142,33 @@ package JsF.components.act
 		{
 			return scroller;
 		}
-		
-		
-		
-		protected function getScrollerBar():ScrollBarBase
-		{
-			
-			return scrollerbar
-		}
+
 		
 		protected function onCheckScrolling(event:FlexEvent):void
 		{
-			if (getScrollerBar())
+			
+			if (checkEnd())
 			{
-				if (checkEnd())
+				if (!bOnce)
 				{
-					if (!bOnce)
-					{
-						reclick()
-						dispatchEvent(new JEvent(JEvent.ONEND));
-						bOnce = true
-					}
-				}else if(checkStart())
+					reclick()
+					dispatchEvent(new JEvent(JEvent.ONEND));
+					bOnce = true
+				}
+			}else if(checkStart())
+			{
+				if (!bOnce)
 				{
-					if (!bOnce)
-					{
-						reclick()
-						dispatchEvent(new JEvent(JEvent.ONSTART));
-						bOnce = true
-					}
+					reclick()
+					dispatchEvent(new JEvent(JEvent.ONSTART));
+					bOnce = true
 				}
 			}
+		}
+		
+		public function openCheckEvent():void
+		{
+			bOnce = false
 		}
 		
 		
@@ -163,17 +177,6 @@ package JsF.components.act
 			_stop()
 		}
 		
-		protected function checkStart():Boolean
-		{
-			return scrollerbar.value <= scrollerbar.minimum + nRange - $slider
-		}
-		
-		
-		
-		protected function checkEnd():Boolean
-		{
-			return scrollerbar.value >= scrollerbar.maximum - nRange + $slider
-		}
 		
 	}
 }

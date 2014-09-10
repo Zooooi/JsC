@@ -52,6 +52,12 @@ package JsF.components.act
 			motionPath.valueBy = _value
 		}
 		
+		public function setFromTo(_from:Number,_to:Number):void
+		{
+			motionPath.valueFrom = _from
+			motionPath.valueTo = _to
+		}
+		
 		public function play():void
 		{
 			ani.play(objArray);
@@ -61,6 +67,11 @@ package JsF.components.act
 		{
 			if (ani.isPlaying)
 				ani.stop()
+		}
+		
+		public function setStartDelay(_value:uint):void
+		{
+			ani.startDelay = _value
 		}
 	}
 }

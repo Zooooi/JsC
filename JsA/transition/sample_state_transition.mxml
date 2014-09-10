@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark">
+	<s:states>
+		<s:State name="intro" />
+		<s:State name="main" />
+	</s:states>
+	
+	<fx:Declarations>
+		<s:Bounce id="easer1" />
+		<s:Elastic id="easer2" />
+		<s:Linear />
+		<s:Power />
+		<s:Sine />
+	</fx:Declarations>
+	
+	<s:transitions>
+		<s:Transition fromState="intro" toState="main">
+			<s:Sequence>
+				<s:Move disableLayout="true" easer="{easer2}" target="{menuGroup}" />
+				<s:SetAction property="verticalCenter" target="{menuGroup}" value="{NaN}" />
+				<s:SetAction property="horizontalCenter" target="{menuGroup}" value="{NaN}" />
+				<s:AddAction target="{dg}" />
+				<s:Fade easer="{easer1}" target="{dg}" />
+			</s:Sequence>
+		</s:Transition>
+	</s:transitions>
+	
+	<s:VGroup horizontalCenter.intro="0" id="menuGroup" left.main="10" top.main="10" verticalCenter.intro="0">
+		<s:Label text="Logo is here" />
+		<s:Button click="currentState = 'main'" label="Click Me!" />
+		<s:Button click="currentState = 'main'" label="Click Me!" />
+	</s:VGroup>
+	
+	<mx:DataGrid bottom="10" id="dg" includeIn="main" left="{menuGroup.width + 20}" right="10" top="10">
+		<mx:columns>
+			<mx:DataGridColumn headerText="First" />
+			<mx:DataGridColumn headerText="Second" />
+		</mx:columns>
+	</mx:DataGrid>
+
+</s:Group>

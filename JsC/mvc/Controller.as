@@ -1,5 +1,7 @@
 package JsC.mvc
 {
+	import mx.core.UIComponent;
+	
 
 	public class Controller extends ActBase
 	{
@@ -16,6 +18,9 @@ package JsC.mvc
 			return _model;
 		}
 		
-		
+		public function _addSymbol(_value:UIComponent):void
+		{
+			
+		}
 	}
 }

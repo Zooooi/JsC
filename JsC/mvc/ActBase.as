@@ -2,33 +2,20 @@ package JsC.mvc
 {
 	import flash.events.EventDispatcher;
 	
-	import mx.core.UIComponent;
-	
 	public class ActBase extends EventDispatcher
 	{
 		
+		public var $name:String
 		
 		public function ActBase()
 		{
 			
 		}
 		
-	
-		public function _addModel(_value:Model):void
+		public function _addAct(_value:ActBase):void
 		{
 			
 		}
 		
-		
-		public function _addVO(_value:VO):void
-		{
-			
-		}
-		
-		public function _addSymbol(_value:UIComponent):void
-		{
-			
-		}
-	
 	}
 }

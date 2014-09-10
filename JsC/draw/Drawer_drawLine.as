@@ -1,7 +1,6 @@
 package JsC.draw
 {
 	import flash.display.BlendMode;
-	import flash.display.Sprite;
 
 	public class Drawer_drawLine extends Drawer_drawBase
 	{
@@ -39,8 +38,6 @@ package JsC.draw
 					drawShape.graphics.moveTo(drawSprite.mouseX,drawSprite.mouseY)
 					break;
 			}
-			
-			
 		}
 		
 		

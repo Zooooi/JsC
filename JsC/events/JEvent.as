@@ -19,9 +19,10 @@ package JsC.events
 		public static const IOERROR:String = "IOERROR";
 		
 		public static const COMPLETE:String = "COMPLETE"	
-		public static const ITEMCOMPLETE:String = "ITEMCOMPLETE"	
-		public static const ONECOMPLETE:String = "ONECOMPLETE"	
 		public static const ALLCOMPLETE:String = "ALLCOMPLETE"	
+		public static const INIT_COMPLETE:String = "INIT_COMPLETE"	
+		public static const ITEM_COMPLETE:String = "ITEM_COMPLETE"	
+		public static const ONE_COMPLETE:String = "ONE_COMPLETE"	
 		
 		
 		//Navigate--------------------------------------------------------------------------------------
@@ -45,6 +46,8 @@ package JsC.events
 		public static const TIMEOUT:String = "TIMEOUT" 
 		public static const FINISH:String = "FINISH"
 		public static const OVER:String = "OVER"
+		public static const DELAY:String = "DELAY"
+		public static const MENU:String = "MENU"
 		
 		//draw--------------------------------------------------------------------------
 		public static const DRAWING:String = "DRAWING"
@@ -57,9 +60,12 @@ package JsC.events
 		public static const CREATE:String = "CREATE"
 		public static const UPDATE:String = "UPDATE"	
 		public static const CHANGE:String = "CHANGE"
+		public static const CHANGED:String = "CHANGED"
 		public static const ADD:String = "ADD"
+		public static const ADDED:String = "ADDED"
 		public static const DEL:String = "DEL"
 		public static const REMOVE:String = "REMOVE"	
+		public static const REMOVED:String = "REMOVED"	
 		public static const SELECT:String = "SELECT"
 		public static const DOWNLOAD:String = "DOWNLOAD"
 		public static const SAVE:String = "SAVE"
@@ -96,7 +102,6 @@ package JsC.events
 		public static const RESIZE:String = "JSRESIZE"
 		public static const MOVE:String = "JSMOVE"
 		
-		
 		//MouseEvent---------------------------------------------------------------------------
 		public static const ONLEFT:String = "ONLEFT"
 		public static const ONRIGHT:String = "ONRIGHT"
@@ -105,8 +110,6 @@ package JsC.events
 			
 		public static const ONSTART:String = "ONSTART"	
 		public static const ONEND:String = "ONEND"	
-		
-		
 	}
 	
 }

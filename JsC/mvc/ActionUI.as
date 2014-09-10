@@ -2,7 +2,9 @@ package JsC.mvc
 {
 	import mx.core.UIComponent;
 	
-	public class ActionUI extends ActionObjectBase
+	import JsC.events.JEvent;
+	
+	public class ActionUI extends ActionUIBase
 	{
 		protected var me:ActionUI;
 		
@@ -17,15 +19,12 @@ package JsC.mvc
 			if(_vi != null) __initView(_vi);
 		}
 		
-		
-		
-		
-		public function _addCtrl(_value:Controller):void
+		public function _addEvent(_value:JEvent):void
 		{
 			
 		}
 		
-		public function _addAction(_value:ActionUI):void
+		public function _addSymbol(_value:UIComponent):void
 		{
 			
 		}

@@ -1,12 +1,17 @@
 package JsC.mvc
 {
+	import JsC.sys.JObject;
 	
 	[Bindable] dynamic public class VO extends Object
 	{
-		public var vL:Array
+		public var vL:Vector.<Object>
 		
-		public function VO()
+		public function VO(obj:Object = null)
 		{
+			if (obj !=null)
+			{
+				fill(obj)
+			}
 		}
 		
 		public function fill(obj:Object):void
@@ -25,9 +30,9 @@ package JsC.mvc
 			}
 		}
 		
-		public function fillToArray(obj:Object):void
+		public function toArray(obj:Object):void
 		{
-			vL = new Array
+			vL = new Vector.<Object>
 			for (var i:* in obj)
 			{
 				vL.push({name:i,content:obj[i]});
@@ -47,7 +52,6 @@ package JsC.mvc
 		}
 		
 		
-		
 		public function a(_name:String):Array
 		{
 			return this[_name];
@@ -57,6 +61,19 @@ package JsC.mvc
 		public function o(_obj:Object):String
 		{
 			return String(_obj);
+		}
+		
+		public function toObject():Object
+		{
+			var vo:Object = (JObject.cloneObject(this))
+			return vo
+		}
+		
+		public function clone():VO
+		{
+			var vo:VO = new VO
+			vo.fill(toObject())
+			return vo
 		}
 		
 	}

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" width="400" height="300">
+	<fx:Declarations>
+		<fx:Number id="alpha"/>
+		<fx:Number id="nMoveDuration"/>
+		<fx:Number id="nTop"/>
+		<fx:Number id="nBottom"/>
+		<fx:Number id="nTargetX"/>
+		<fx:Number id="nTargetY"/>
+		
+		
+		<s:Fade duration="200" alphaFrom="{alpha}" alphaTo="0" target="{this}" />
+		
+		<s:Linear id="linearMove" />
+		
+		<s:Sequence id="fallEffect">
+			<s:Move target="{this}" duration="{nMoveDuration}" yFrom="{nTop}" yTo="{nBottom}" easer="{linearMove}" />
+		</s:Sequence>
+	
+		
+		<s:Sequence id="drapTargetEffect" target="{this}">
+			<s:Move xFrom="{this.x}" yFrom="{this.y}" xTo="{nTargetX}" yTo="{nTargetY}" duration="200" />
+			<s:Parallel >
+				<s:Scale transformX="{this.width/2}" transformY="{this.height/2}" scaleXFrom="{this.scaleX}" scaleXTo="0" scaleYFrom="{this.scaleY}" scaleYTo="0" duration="1000"/>
+				<s:Fade duration="1000" alphaFrom="{alpha}" alphaTo="0" target="{this}" />
+			</s:Parallel>
+		</s:Sequence>
+		
+	</fx:Declarations>
+</s:Group>

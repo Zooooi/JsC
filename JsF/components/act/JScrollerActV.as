@@ -3,7 +3,6 @@ package JsF.components.act
 	import mx.core.UIComponent;
 	
 	import spark.components.BusyIndicator;
-	import spark.components.supportClasses.ScrollBarBase;
 	
 	import JsC.events.JEvent;
 	
@@ -41,12 +40,6 @@ package JsF.components.act
 					dragWaiting.visible = false
 					break
 			}
-		}
-		
-		override protected function getScrollerBar():ScrollBarBase
-		{
-			scrollerbar = scroller.verticalScrollBar
-			return scrollerbar
 		}
 		
 	}

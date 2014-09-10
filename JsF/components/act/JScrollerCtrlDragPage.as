@@ -8,6 +8,8 @@ package JsF.components.act
 	import spark.components.Group;
 	import spark.components.HGroup;
 	import spark.components.VGroup;
+	import spark.layouts.HorizontalLayout;
+	import spark.layouts.VerticalLayout;
 	
 	import JsC.events.JEvent;
 	import JsC.mvc.Controller;
@@ -17,6 +19,8 @@ package JsF.components.act
 	
 	[Event(name="REMOVE", type="JsC.events.JEvent")]
 	[Event(name="ALLCOMPLETE", type="JsC.events.JEvent")]
+	[Event(name="INIT", type="JsC.events.JEvent")]
+	[Event(name="ADDED", type="JsC.events.JEvent")]
 	
 	
 	public class JScrollerCtrlDragPage extends Controller implements IScrollerDragePage
@@ -44,6 +48,7 @@ package JsF.components.act
 		private var nValue:Number
 		protected var aniScroll:JScrollerAni
 		
+		
 		public function JScrollerCtrlDragPage(_ctrl:JScrollerActBase) 
 		{
 			scrollerCtrl = _ctrl;
@@ -55,19 +60,87 @@ package JsF.components.act
 			{
 				aniScroll.verticalScroll([grContent.layout])
 				addEventListener(JEvent.REMOVE,onVAddEvent)
-				addEventListener(JEvent.ALLCOMPLETE,function():void{scroller.verticalScrollBar.viewport.verticalScrollPosition = nValue;})
-			}else{
+				addEventListener(JEvent.ALLCOMPLETE,function():void{
+					scroller.viewport.verticalScrollPosition = nValue
+				})
+			}else if (grContent is HGroup) {
 				aniScroll.horizontalScroll([grContent.layout])
 				addEventListener(JEvent.REMOVE,onHAddEvent)
-				addEventListener(JEvent.ALLCOMPLETE,function():void{scroller.horizontalScrollBar.viewport.horizontalScrollPosition = nValue;})
+				addEventListener(JEvent.ALLCOMPLETE,function():void{
+					scroller.viewport.horizontalScrollPosition = nValue
+				})
 			}
+			
 		}
 		
-		protected function aniScrollTo(_offset:Number):void
+		
+		/*
+		var lay:HorizontalLayout = gr.layout as HorizontalLayout;	
+		var _x:Number = lay.getElementBounds(_elementIndex).x
+		var _w:Number = _numberItem.width /2
+		
+		位移
+		nCurrentButtonX = (_x + _w) - lay.horizontalScrollPosition - scroller.viewport.width/2
+		aniScrollBy(nCurrentButtonX)
+		*/
+		protected function aniScrollBy(_offset:Number):void
 		{
 			aniScroll.setValue(_offset)
 			aniScroll.play()
 		}
+		
+		
+		
+		/*
+		var lay:HorizontalLayout = gr.layout as HorizontalLayout;	
+		var _x:Number = lay.getElementBounds(_elementIndex).x
+		var _w:Number = _numberItem.width /2
+		
+		位置
+		nCurrentButtonX = lay.getElementBounds(_elementIndex).x - scroller.viewport.width/2 + _w
+		aniScrollTo(lay.horizontalScrollPosition,nCurrentButtonX)
+		*/
+		protected function aniScrollFromTo(_from:Number,_to:Number):void
+		{
+			
+			aniScroll.setFromTo(_from,_to)
+			aniScroll.play()
+		}
+		
+		
+		protected function aniScrollToIndex(_elementIndex:uint,_offset:Number):Number
+		{
+			var _t:Number
+			var _f:Number
+			if (grContent is VGroup)
+			{
+				_f = VerticalLayout(grContent.layout).verticalScrollPosition;
+				_t = grContent.layout.getElementBounds(_elementIndex).y - scroller.viewport.height/2 + _offset
+			}else if (grContent is HGroup) {
+				_f = HorizontalLayout(grContent.layout).horizontalScrollPosition;
+				_t = grContent.layout.getElementBounds(_elementIndex).x - scroller.viewport.width/2 + _offset
+			}
+			aniScrollFromTo(_f,_t)
+			return _t
+		}
+		
+		
+		protected function aniScrollStop():void
+		{
+			aniScroll.stop()
+		}
+			
+		
+		protected function aniScrollTo(_value:Number):void
+		{
+			if (grContent is VGroup)
+			{
+				aniScrollFromTo(grContent.layout.verticalScrollPosition,_value)
+			}else if (grContent is HGroup) {
+				aniScrollFromTo(grContent.layout.horizontalScrollPosition,_value)
+			}
+		}
+		
 		
 		protected function onHAddEvent(event:JEvent):void
 		{
@@ -78,16 +151,18 @@ package JsF.components.act
 				switch(act)
 				{
 					case actNext:
-						nValue = scroller.horizontalScrollBar.value - nValue
+						nValue = scroller.viewport.horizontalScrollPosition - nValue
+						
 						break;
 					case actPrev:
-						nValue = scroller.horizontalScrollBar.value + nValue 
+						nValue = scroller.viewport.horizontalScrollPosition + nValue 
 						break
 				}
 				setUpdateEvent()
 			}
 			
 		}
+		
 		
 		protected function onVAddEvent(event:JEvent):void
 		{
@@ -135,9 +210,22 @@ package JsF.components.act
 			act = actNormal
 		}
 		
+		public function removeAllElement():void
+		{
+			/*for (var i:int = 0; i < grContent.numElements; i++) 
+			{
+				var _ui:UIComponent = UIComponent(grContent.getElementAt(i))
+				if (_ui.hasEventListener(Event.REMOVED_FROM_STAGE))
+				_ui.removeEventListener(Event.REMOVED_FROM_STAGE,onItemEvent)
+			}*/
+			
+			grContent.removeAllElements()
+		}
 		
 		protected function addItem(_start:uint,_end:uint):void
 		{
+			scroller.stopAnimations()
+				
 			nLength = _end - _start
 			var addFunc:Function 
 			switch(act)
@@ -159,21 +247,24 @@ package JsF.components.act
 			for (var i:int = _start; i <_end; i++) 
 			{
 				var _item:UIComponent = createItem(i);
-				if (act != actInit)
+				if (_item != null)
 				{
 					_item.addEventListener(FlexEvent.CREATION_COMPLETE,onItemEvent)
+					if (act != actNormal )
+					{
+						_item.addEventListener(Event.REMOVED_FROM_STAGE,onItemEvent)
+					}
+					addFunc(_item,i)
+				}else{
+					nLength --
 				}
-				if (act != actNormal)
-				{
-					_item.addEventListener(Event.REMOVED_FROM_STAGE,onItemEvent)
-				}
-				addFunc(_item,i)
+				
 			}
 		
 		}
 		
 		
-		protected function delItem():void
+		protected function addAndDelItem():void
 		{
 			nCount = 0
 			nValue = 0
@@ -209,9 +300,17 @@ package JsF.components.act
 					nCount++;
 					if (nCount == nLength)
 					{
+						
 						switch(act)
 						{
+							
+							case actInit:
+								dispatchEvent(new JEvent(JEvent.INIT))
+								break
 							case actNormal:
+								/**
+								 * bible的普通載入方式
+								 * */
 								if (scroller.verticalScrollBar)
 								{
 									scroller.viewport.verticalScrollPosition = 0
@@ -222,9 +321,10 @@ package JsF.components.act
 								scrollerCtrl.dispatchEvent(new JEvent(JEvent.READY))
 								break;
 							default:
-								delItem();
+								addAndDelItem();
 								break;
 						}
+						dispatchEvent(new JEvent(JEvent.ADDED))
 					}
 					break;
 				

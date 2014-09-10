@@ -12,7 +12,7 @@ package JsC.sys
 		private static var bAND:Boolean
 		public function SystemOs():void
 		{
-			
+			trace("SystemOs",getOS())
 		}
 		
 		private static function getOS():String
@@ -22,11 +22,11 @@ package JsC.sys
 		
 		public static function isAndroid():Boolean
 		{
-			return  Capabilities.os.indexOf("Linux")>=0
+			return  getOS().indexOf("Linux")>=0
 		}
 		public static function isIOS():Boolean
 		{
-			return  Capabilities.os.indexOf("iPhone")>=0
+			return  getOS().indexOf("iPhone")>=0
 		}
 		
 		public static function get isMobile():Boolean
@@ -37,7 +37,7 @@ package JsC.sys
 		public static function get isPc():Boolean
 		{
 			//當進行mobile開發時:<mode == MOBILE>
-			return mode == MOBILE//PC
+			return mode == PC
 		}
 		
 		
