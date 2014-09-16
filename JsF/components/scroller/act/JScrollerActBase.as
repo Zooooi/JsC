@@ -1,4 +1,11 @@
-package JsF.components.act
+/**
+ * 檢測 scroller 在移動到頂部或底部後發出相應事件
+ * 
+ * JScrollerActH 和 JScrollerActV 是針對橫豎scroller的擴展類。
+ * 
+ */
+
+package JsF.components.scroller.act
 {
 	import flash.display.Stage;
 	import flash.events.MouseEvent;
@@ -16,9 +23,9 @@ package JsF.components.act
 	import JsC.mvc.ActionUI;
 	import JsC.sys.SystemOS;
 	
-	import JsF.components.JScrollerH;
-	import JsF.components.JScrollerV;
-	import JsF.components.rebuilder.Scroller_ex;
+	import JsF.components.scroller.viewer.JcScrollerH;
+	import JsF.components.scroller.viewer.JcScrollerV;
+	import JsF.components.scroller.viewer.JScroller;
 	
 	
 	[Event(name="ONSTART", type="JsC.events.JEvent")]
@@ -29,7 +36,7 @@ package JsF.components.act
 	{
 		public var $slider:Number = 30;
 		
-		protected var scroller:Scroller_ex;
+		protected var scroller:JScroller;
 		
 		protected var stage:Stage
 		
@@ -42,8 +49,8 @@ package JsF.components.act
 		
 		protected var gr:Group
 		
-		protected var scrollerV:JScrollerV;
-		protected var scrollerH:JScrollerH;
+		protected var scrollerV:JcScrollerV;
+		protected var scrollerH:JcScrollerH;
 		
 		protected var nTimer:Timer
 		protected var nInterval:uint
@@ -54,18 +61,19 @@ package JsF.components.act
 		public function JScrollerActBase(_vi:UIComponent)
 		{
 			super(_vi);
-			if (_vi is JScrollerV)
+			
+			if (_vi is JcScrollerV)
 			{
-				scrollerV = JScrollerV(_vi)
+				scrollerV = JcScrollerV(_vi)
 				scroller = scrollerV._scroller
 				gr = scrollerV._gr
 				reset()
 				checkStart = function():Boolean{return scroller.viewport.verticalScrollPosition < 0  - $slider}	
 				checkEnd = function():Boolean{return scroller.viewport.verticalScrollPosition > gr.layout.target.contentHeight - nRange + $slider}	
 				
-			}else if (_vi is JScrollerH){
+			}else if (_vi is JcScrollerH){
 				
-				scrollerH = JScrollerH(_vi)
+				scrollerH = JcScrollerH(_vi)
 				scroller = scrollerH._scroller
 				gr = scrollerH._gr
 				reset()
@@ -81,7 +89,7 @@ package JsF.components.act
 		
 		private  function reset():void
 		{
-			if (vi is JScrollerV)
+			if (vi is JcScrollerV)
 			{
 				
 				if(SystemOS.isPc)
@@ -92,7 +100,7 @@ package JsF.components.act
 				}
 				
 				nRange = scroller.height
-			}else if (vi is JScrollerH){
+			}else if (vi is JcScrollerH){
 				
 				if(SystemOS.isPc)
 				{
@@ -138,7 +146,7 @@ package JsF.components.act
 			return HGroup(gr);
 		}
 		
-		public function _getScroller():Scroller_ex
+		public function _getScroller():JScroller
 		{
 			return scroller;
 		}

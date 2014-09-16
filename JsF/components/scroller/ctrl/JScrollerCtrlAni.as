@@ -1,4 +1,10 @@
-package JsF.components.act
+/**
+ * 讓 scroller 擁有 Animate 控件 
+ * 
+ */
+
+
+package JsF.components.scroller.ctrl
 {
 	import spark.effects.Animate;
 	import spark.effects.animation.MotionPath;
@@ -6,15 +12,16 @@ package JsF.components.act
 	
 	import JsC.mvc.Controller;
 	
-	public class JScrollerAni extends Controller
+	public class JScrollerCtrlAni extends Controller
 	{
+		public var duration:uint = 1000
+			
 		private var ani:Animate
 		private var objArray:Array
-		public var duration:uint = 1000
 		private var bVertical:Boolean = true;
 		private var motionPath:SimpleMotionPath
 		
-		public function JScrollerAni()
+		public function JScrollerCtrlAni()
 		{
 			ani = new Animate
 		}

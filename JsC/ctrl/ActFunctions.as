@@ -1,14 +1,14 @@
-package JsC.action
+package JsC.ctrl
 {
 	import flash.events.EventDispatcher;
 	
-	public class ActFunc extends EventDispatcher
+	public class ActFunctions extends EventDispatcher
 	{
 		
 		private var aVector:Array
 		private var nCount:uint
 		
-		public function ActFunc(_vector:Array)
+		public function ActFunctions(_vector:Array)
 		{
 			aVector = _vector
 		}

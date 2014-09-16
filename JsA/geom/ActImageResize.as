@@ -1,8 +1,5 @@
-package JsF.geom
+package JsA.geom
 {
-	import JsC.events.JEvent;
-	import JsC.mvc.Model;
-	
 	import flash.display.Stage;
 	import flash.events.Event;
 	import flash.utils.setTimeout;
@@ -10,20 +7,22 @@ package JsF.geom
 	import mx.core.UIComponent;
 	
 	import spark.components.Image;
-	import spark.primitives.BitmapImage;
+	
+	import JsC.events.JEvent;
+	import JsC.mvc.ActionUI;
 	
 	[Event(name="JRESIZE", type="JsC.events.JEvent")]
-	public class ResizeImgWidth_complete extends ResizeUI_Base
+	public class ActImageResize extends ActionUI
 	{
+		public var _timer:uint = 20;
 		protected var img:Image
 		protected var pw:uint
 		protected var target:UIComponent
-		protected var _timer:uint = 20;
 		protected var stage:Stage
 		private var nW:uint
-		public function ResizeImgWidth_complete(event:Event)
+		public function ActImageResize(_vi:UIComponent=null)
 		{
-			img = Image(event.currentTarget);
+			img = Image(_vi);
 			pw = img.percentWidth
 			img.addEventListener(Event.ADDED_TO_STAGE,onEvent)
 			img.addEventListener(Event.REMOVED_FROM_STAGE, onEvent)

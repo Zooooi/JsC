@@ -1,4 +1,4 @@
-package JsF.geom
+package JsA.geom
 {
 	import JsC.mvc.Model;
 	

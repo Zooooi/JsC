@@ -17,14 +17,22 @@ package JsC.events
 		public static const SUCCESS:String = "SUCCESS";
 		public static const ERROR:String = "ERROR";
 		public static const IOERROR:String = "IOERROR";
+		public static const DESTORY:String = "DESTORY";
 		
+		
+		public static const RUN:String = "RUN"	
 		public static const COMPLETE:String = "COMPLETE"	
 		public static const ALLCOMPLETE:String = "ALLCOMPLETE"	
 		public static const INIT_COMPLETE:String = "INIT_COMPLETE"	
-		public static const ITEM_COMPLETE:String = "ITEM_COMPLETE"	
 		public static const ONE_COMPLETE:String = "ONE_COMPLETE"	
 		
-		
+		//uicomponent -------------------------------------------------------------------------------------
+		public static const ITEM_ADDED:String = "ITEM_ADDED"
+		public static const ITEM_CREATE:String = "ITEM_CREATE"
+		public static const ITEM_REMOVE:String = "ITEM_REMOVE"
+		public static const ITEM_DELETE:String = "ITEM_DELETE"
+		public static const ITEM_COMPLETE:String = "ITEM_COMPLETE"
+			
 		//Navigate--------------------------------------------------------------------------------------
 		public static const HOME:String = "HOME"
 		public static const EXIT:String = "EXIT"
@@ -48,6 +56,10 @@ package JsC.events
 		public static const OVER:String = "OVER"
 		public static const DELAY:String = "DELAY"
 		public static const MENU:String = "MENU"
+		public static const QUIT:String = "QUIT"
+		public static const CLOSE:String = "CLOSE"
+		public static const HITTEST:String = "HITTEST"
+		public static const STOP:String = "STOP"
 		
 		//draw--------------------------------------------------------------------------
 		public static const DRAWING:String = "DRAWING"
@@ -101,6 +113,11 @@ package JsC.events
 		public static const CLICK:String = "JSCLICK"
 		public static const RESIZE:String = "JSRESIZE"
 		public static const MOVE:String = "JSMOVE"
+			
+		public static const ONMOUSEDW:String = "ONMOUSEDW"
+		public static const ONMOUSEUP:String = "ONMOUSEUP"
+		public static const ONMOUSEMV:String = "ONMOUSEMV"
+		public static const ONMOUSEOV:String = "ONMOUSEOV"
 		
 		//MouseEvent---------------------------------------------------------------------------
 		public static const ONLEFT:String = "ONLEFT"

@@ -10,6 +10,10 @@
 				super.mx_internal::stopAnimations();
 			}
 			
+			public function stopDroping():void
+			{
+				dispatchEvent(new MouseEvent(MouseEvent.MOUSE_DOWN))
+			}
 		]]>
 	</fx:Script>
 </s:Scroller>

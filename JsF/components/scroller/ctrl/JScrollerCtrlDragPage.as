@@ -1,4 +1,13 @@
-package JsF.components.act
+/**
+ * JScrollerActBase(JScrollerActH,JScrollerActV) 附加類
+ * 
+ * 通過 JScrollerActBase 所產生的 
+ *   ONSTART ONEND READY 事件，可以進行重載新的item後能保持scroller的viewport數值
+ * 
+ * 
+ */	
+
+package JsF.components.scroller.ctrl
 {
 	import flash.events.Event;
 	
@@ -14,7 +23,9 @@ package JsF.components.act
 	import JsC.events.JEvent;
 	import JsC.mvc.Controller;
 	
-	import JsF.components.rebuilder.Scroller_ex;
+	import JsF.components.scroller.viewer.JScroller;
+	import JsF.components.scroller.act.IScrollerDragePage;
+	import JsF.components.scroller.act.JScrollerActBase;
 	
 	
 	[Event(name="REMOVE", type="JsC.events.JEvent")]
@@ -32,7 +43,7 @@ package JsF.components.act
 		protected const actPrev:String = "actPrev"
 		protected var act:String = actInit	
 		
-		protected var scroller:Scroller_ex
+		protected var scroller:JScroller
 		protected var scrollerCtrl:JScrollerActBase
 		
 		private var grContent:Group
@@ -46,7 +57,7 @@ package JsF.components.act
 		private var nUpdate_debug:uint;
 		private var nInterval:uint
 		private var nValue:Number
-		protected var aniScroll:JScrollerAni
+		protected var aniScroll:JScrollerCtrlAni
 		
 		
 		public function JScrollerCtrlDragPage(_ctrl:JScrollerActBase) 
@@ -54,7 +65,7 @@ package JsF.components.act
 			scrollerCtrl = _ctrl;
 			scroller = scrollerCtrl._getScroller()
 			grContent = _ctrl._getContent()
-			aniScroll = new JScrollerAni
+			aniScroll = new JScrollerCtrlAni
 			
 			if (grContent is VGroup)
 			{

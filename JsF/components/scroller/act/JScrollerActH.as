@@ -1,4 +1,4 @@
-package JsF.components.act
+package JsF.components.scroller.act
 {
 	import mx.core.UIComponent;
 	

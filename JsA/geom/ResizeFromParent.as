@@ -1,12 +1,11 @@
-package JsF.geom
+package JsA.geom
 {
 	
-	import JsC.events.JEvent;
-	
-	import flash.display.Stage;
 	import flash.events.Event;
 	
 	import mx.core.UIComponent;
+	
+	import JsC.events.JEvent;
 	public class ResizeFromParent extends ResizeUI_Base
 	{
 		

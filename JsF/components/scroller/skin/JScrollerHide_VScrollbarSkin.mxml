@@ -89,16 +89,16 @@ viewport property to link them together.
 		<!---  A vertical scrollbar that lets you control the portion of data that is displayed 
 		when there is too much data to fit vertically in a display area.
 		The Scroller determines whether the vertical ScrollBar is visible. -->
-		<!--<fx:Component id="verticalScrollBarFactory">
-			<s:VScrollBar visible="false" />
-		</fx:Component>-->
+		<fx:Component id="verticalScrollBarFactory">
+			<s:VScrollBar skinClass="JsF.components.scroller.skin.JScrollerHideScrollbarSkin_VScrollBar"/>
+		</fx:Component>
 		
 		<!---  A horizontal scrollbar that lets you control the portion of data that is displayed 
 		when there is too much data to fit horizontally in a display area.
 		The Scroller determines whether the horizontal ScrollBar is visible. -->
-		<fx:Component  id="horizontalScrollBarFactory">
+		<!--<fx:Component  id="horizontalScrollBarFactory">
 			<s:HScrollBar skinClass="JsF.components.skin.JScrollerHideScrollbarSkin_HScrollBar"/>
-		</fx:Component> 
+		</fx:Component> -->
 	</fx:Declarations>
 	
 </s:SparkSkin>

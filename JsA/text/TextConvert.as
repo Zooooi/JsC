@@ -1,4 +1,4 @@
-package JsF.text
+package JsA.text
 {
 	import flashx.textLayout.conversion.ConversionType;
 	import flashx.textLayout.conversion.TextConverter;

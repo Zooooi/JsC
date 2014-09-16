@@ -1,4 +1,4 @@
-package JsF.net
+package JsA.net
 {
 	import mx.rpc.http.HTTPService;
 	

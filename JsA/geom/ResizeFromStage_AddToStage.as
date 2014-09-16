@@ -1,4 +1,4 @@
-package JsF.geom
+package JsA.geom
 {
 	import JsC.events.JEvent;
 	
@@ -46,6 +46,8 @@ package JsF.geom
 			_event.w = _w
 			_event.h = _h
 			dispatchEvent(_event)
+			
+			
 			
 		}
 	}

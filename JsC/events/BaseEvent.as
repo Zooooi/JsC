@@ -21,15 +21,16 @@ package JsC.events
 		public var m:int
 		public var n:int
 		
-		public var i:uint
-		public var j:uint
-		public var k:uint
+		public var i:int
+		public var j:int
+		public var k:int
 		
 		public var id:uint
 		public var index:uint
 		public var selectIndex:uint
 		
 		public var name:String
+		public var text:String
 		public var key:String
 		public var url:String
 		public var path:String
