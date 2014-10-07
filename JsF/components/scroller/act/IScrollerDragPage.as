@@ -1,6 +1,6 @@
 package JsF.components.scroller.act
 {
-	public interface IScrollerDragePage
+	public interface IScrollerDragPage
 	{
 		function init():void
 		function next():void

@@ -6,7 +6,9 @@ package JsC.mvc
 	public class Controller extends ActBase
 	{
 	
+		protected var _ctrl:Controller
 		protected var _model:Model
+		
 		
 		public function Controller()
 		{

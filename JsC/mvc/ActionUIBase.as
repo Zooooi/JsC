@@ -18,7 +18,10 @@ package JsC.mvc
 			vi = _vi;
 		}
 		
-		
+		public function _addVO(_value:VO):void
+		{
+			
+		}
 		
 	}
 }

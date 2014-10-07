@@ -13,11 +13,11 @@ package JsF.components.scroller.act
 		public function JScrollerActH(_vi:UIComponent)
 		{
 			super(_vi);
-			
 			dragWaiting = scrollerH._dragWaiting
 			addEventListener(JEvent.ONSTART,onWaitingEvent)
 			addEventListener(JEvent.ONEND,onWaitingEvent)
 			addEventListener(JEvent.READY,onWaitingEvent)
+			
 		}
 		
 		protected function onWaitingEvent(event:JEvent):void

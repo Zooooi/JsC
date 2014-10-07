@@ -2,7 +2,7 @@ package JsC.events
 {
 	import mx.core.UIComponent;
 
-	public class GameEvent extends BaseEvent
+	public class JGameStateEvent extends BaseEvent
 	{
 		public static const ADDED_TO_TARGET:String = "ADDED_TO_TARGET"
 		public static const ADDED_TO_SOURCE:String = "ADDED_TO_SOURCE"
@@ -19,13 +19,15 @@ package JsC.events
 		public static const DRAG_START:String = "ONDRAG_START"
 		public static const DRAG_UPDATE:String = "ONDRAG_UPDATE"
 		public static const DRAG_END:String = "ONDRAG_UPDATE"
-			
+				
 		public var _target:UIComponent
+		public var _current:UIComponent
+		public var _source:UIComponent
 		public var _parent:UIComponent
 		public var _hitTest:Boolean
 		public var _id:int
 		
-		public function GameEvent(type:String)
+		public function JGameStateEvent(type:String)
 		{
 			super(type);
 		}

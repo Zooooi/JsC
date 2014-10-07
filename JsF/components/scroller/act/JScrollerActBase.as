@@ -21,11 +21,10 @@ package JsF.components.scroller.act
 	
 	import JsC.events.JEvent;
 	import JsC.mvc.ActionUI;
-	import JsC.sys.SystemOS;
 	
-	import JsF.components.scroller.viewer.JcScrollerH;
-	import JsF.components.scroller.viewer.JcScrollerV;
-	import JsF.components.scroller.viewer.JScroller;
+	import JsF.components.scroller.ext.JScroller;
+	import JsF.components.scroller.ext.JcScrollerH;
+	import JsF.components.scroller.ext.JcScrollerV;
 	
 	
 	[Event(name="ONSTART", type="JsC.events.JEvent")]
@@ -34,7 +33,7 @@ package JsF.components.scroller.act
 	
 	public class JScrollerActBase extends ActionUI
 	{
-		public var $slider:Number = 30;
+		public var $slider:Number = 0;
 		
 		protected var scroller:JScroller;
 		
@@ -68,18 +67,37 @@ package JsF.components.scroller.act
 				scroller = scrollerV._scroller
 				gr = scrollerV._gr
 				reset()
-				checkStart = function():Boolean{return scroller.viewport.verticalScrollPosition < 0  - $slider}	
-				checkEnd = function():Boolean{return scroller.viewport.verticalScrollPosition > gr.layout.target.contentHeight - nRange + $slider}	
-				
-			}else if (_vi is JcScrollerH){
-				
+				checkStart = function():Boolean
+				{
+					var _b:Boolean = scroller.viewport.verticalScrollPosition <= 0  - $slider
+					return _b
+				}	
+				checkEnd = function():Boolean
+				{
+					var _b:Boolean = scroller.viewport.verticalScrollPosition >= gr.layout.target.contentHeight - nRange + $slider
+					_b = (scroller.height > gr.contentHeight) ? false:_b;
+					return _b;
+				}	
+			}
+			else if (_vi is JcScrollerH)
+			{
 				scrollerH = JcScrollerH(_vi)
 				scroller = scrollerH._scroller
 				gr = scrollerH._gr
 				reset()
-				checkStart = function():Boolean{return scroller.viewport.horizontalScrollPosition < 0  - $slider}	
-				checkEnd = function():Boolean{return scroller.viewport.horizontalScrollPosition > gr.layout.target.contentWidth - nRange + $slider}	
-			}else{
+				checkStart = function():Boolean
+				{
+					var _b:Boolean = scroller.viewport.horizontalScrollPosition <= 0  - $slider
+					return _b
+				}	
+				checkEnd = function():Boolean
+				{
+					var _b:Boolean = scroller.viewport.horizontalScrollPosition >= gr.layout.target.contentWidth - nRange + $slider
+					_b = (scroller.width > gr.contentWidth) ? false:_b;
+					return _b
+				}	
+			}else
+			{
 				return
 			}
 			scroller.viewport.addEventListener(FlexEvent.UPDATE_COMPLETE,onCheckScrolling)
@@ -91,23 +109,8 @@ package JsF.components.scroller.act
 		{
 			if (vi is JcScrollerV)
 			{
-				
-				if(SystemOS.isPc)
-				{
-					nRange = 0
-				}else{
-					nRange = scroller.height
-				}
-				
 				nRange = scroller.height
 			}else if (vi is JcScrollerH){
-				
-				if(SystemOS.isPc)
-				{
-					nRange = 0
-				}else{
-					nRange = scroller.width
-				}
 				nRange = scroller.width
 			}
 		}
@@ -150,7 +153,7 @@ package JsF.components.scroller.act
 		{
 			return scroller;
 		}
-
+		
 		
 		protected function onCheckScrolling(event:FlexEvent):void
 		{

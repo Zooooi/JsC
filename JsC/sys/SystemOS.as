@@ -1,18 +1,17 @@
 package JsC.sys
 {
 	import flash.system.Capabilities;
-
+	
+	import mx.utils.Platform;
+	
+	import JsA.sys.SpecialCaseMapping;
+	
 	public class SystemOS
 	{
-		public static const PC:String = "PC"
-		public static const MOBILE:String = "MOBILE"	
-		public static var mode:String
 		
-		private static var bIOS:Boolean
-		private static var bAND:Boolean
 		public function SystemOs():void
 		{
-			trace("SystemOs",getOS())
+			
 		}
 		
 		private static function getOS():String
@@ -22,41 +21,42 @@ package JsC.sys
 		
 		public static function isAndroid():Boolean
 		{
-			return  getOS().indexOf("Linux")>=0
+			return  Platform.isAndroid
 		}
 		public static function isIOS():Boolean
 		{
-			return  getOS().indexOf("iPhone")>=0
+			return  Platform.isIOS
 		}
 		
 		public static function get isMobile():Boolean
 		{
-			return  mode == MOBILE
+			return  Platform.isMobile
 		}
 		
 		public static function get isPc():Boolean
 		{
-			//當進行mobile開發時:<mode == MOBILE>
-			return mode == PC
+			return Platform.isDesktop
 		}
 		
+		public static function get os():String
+		{
+			var _paltform:String 
+			if (Platform.isWindows){
+				_paltform = "window";
+			}else if (Platform.isMac){
+				_paltform = "mac"
+			}else if (Platform.isAndroid){
+				_paltform = "android"
+			}else if (Platform.isIOS){
+				_paltform = "ios"
+			}
+			return _paltform
+		}
 		
 		public static function init():void
 		{
-			if (Capabilities.cpuArchitecture == "ARM")
-			{
-				if (Capabilities.os.indexOf("Linux")>=0)
-				{
-					bAND = true
-					mode = MOBILE
-				}else if (Capabilities.os.indexOf("iPhone")>=0){
-					bIOS = true
-					mode = MOBILE
-				}
-			}else{
-				mode = PC
-			}
-			
+			var _map:SpecialCaseMapping = new SpecialCaseMapping
+			trace("runtimeDPI",_map.runtimeDPI)
 		}
 	}
 }

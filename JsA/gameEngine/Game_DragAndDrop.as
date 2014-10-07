@@ -1,6 +1,7 @@
 package JsA.gameEngine
 {
 	import flash.display.DisplayObjectContainer;
+	import flash.display.Stage;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	import flash.utils.clearInterval;
@@ -10,25 +11,32 @@ package JsA.gameEngine
 	
 	import spark.components.Group;
 	
-	import JsC.events.GameEvent;
 	import JsC.events.JEvent;
+	import JsC.events.JGameEvent;
+	import JsC.events.JGameStateEvent;
+	import JsC.mvc.ActionUI;
 	import JsC.mvc.Controller;
 	
 	
+	[Event(name="FINISH", type="JsC.events.JGameEvent")]
+	[Event(name="PLAYING", type="JsC.events.JGameEvent")]
 	
-	[Event(name="ADDED_TO_TARGET", type="JsC.events.GameEvent")]
-	[Event(name="ADDED_TO_SOURCE", type="JsC.events.GameEvent")]
-	[Event(name="DRAG_UPDATE", type="JsC.events.GameEvent")]
-	[Event(name="DRAG_START", type="JsC.events.GameEvent")]
+	[Event(name="ADDED_TO_TARGET", type="JsC.events.JGameStateEvent")]
+	[Event(name="ADDED_TO_SOURCE", type="JsC.events.JGameStateEvent")]
+	
+	[Event(name="DRAG_UPDATE", type="JsC.events.JGameStateEvent")]
+	[Event(name="DRAG_START", type="JsC.events.JGameStateEvent")]
 	
 	
-	[Event(name="RETURN_TO_SOURCE", type="JsC.events.GameEvent")]
-	[Event(name="CHANGE_TO_TARGET", type="JsC.events.GameEvent")]
+	[Event(name="RETURN_TO_SOURCE", type="JsC.events.JGameStateEvent")]
+	[Event(name="CHANGE_TO_TARGET", type="JsC.events.JGameStateEvent")]
 	
 	
-	public class Game_DragAndDrop extends Controller
+	public class Game_DragAndDrop extends ActionUI
 	{
-		public var bHitTestQ:Boolean = true
+		public var _hitTestQ:Boolean = true
+		public var _delayTime:uint = 160
+		public var _mouseOver:Boolean = true
 		
 		private var grDrag:Group
 		
@@ -37,7 +45,7 @@ package JsA.gameEngine
 		private var aRecorder:Vector.<MyItem>
 		
 		private var currentBtn:Group
-		private var currentID:uint
+		private var currentID:int
 		private var existID:uint
 		
 		private var nTime:uint
@@ -97,7 +105,6 @@ package JsA.gameEngine
 		{
 			_btn.addEventListener(MouseEvent.MOUSE_DOWN,onSourceBtnMouseEvent)
 			
-			
 		}
 		
 		protected function onSourceBtnMouseEvent(event:MouseEvent):void
@@ -108,9 +115,11 @@ package JsA.gameEngine
 				case MouseEvent.MOUSE_DOWN:
 					clearInterval(nTime)
 					
+					
 					_btn = Group(event.currentTarget)
 					_btn.stage.addEventListener(MouseEvent.MOUSE_UP,onSourceBtnMouseEvent)
 					_btn.addEventListener(MouseEvent.MOUSE_OUT,onSourceBtnMouseEvent)
+					
 					
 					nTime = setInterval(function():void
 					{
@@ -119,13 +128,30 @@ package JsA.gameEngine
 						_btn.startDrag()
 						
 						currentBtn = _btn
-						_btn.removeEventListener(MouseEvent.MOUSE_OUT,onSourceBtnMouseEvent)
+						currentBtn.removeEventListener(MouseEvent.MOUSE_OUT,onSourceBtnMouseEvent)
 						
-						sendEventCombox(GameEvent.DRAG_START)
+						sendEventCombox(JGameStateEvent.DRAG_START)
 						
-					},80)
+						if (_mouseOver)
+						{
+							currentBtn.stage.addEventListener(MouseEvent.MOUSE_MOVE,onSourceBtnMouseEvent)
+						}
+						
+					},_delayTime)
 					
 					break;
+				
+				case MouseEvent.MOUSE_MOVE:
+					var _event:JGameStateEvent = new JGameStateEvent(JGameStateEvent.DRAG_UPDATE)
+					_event._hitTest = checkHitTest()
+					if (checkHitTest())
+					{
+						_event._id = currentID
+						_event._current = currentBtn
+						_event._target = aTarget[currentID]
+					}
+					dispatchEvent(_event)
+					break
 				
 				
 				case MouseEvent.MOUSE_OUT:
@@ -143,7 +169,15 @@ package JsA.gameEngine
 					if (currentBtn)
 					{
 						currentBtn.stopDrag()
-						checkHitTestTarget()
+						onCheckHitTestTarget()
+					}
+					if (_mouseOver && currentBtn !=null)
+					{
+						if (currentBtn.stage.hasEventListener(MouseEvent.MOUSE_MOVE))
+						{
+							currentBtn.stage.removeEventListener(MouseEvent.MOUSE_MOVE,onSourceBtnMouseEvent)
+						}
+						
 					}
 					currentBtn = null
 					break;
@@ -153,7 +187,7 @@ package JsA.gameEngine
 		}
 		
 		
-		protected function onTargetBtnMouseEvent(event:GameEvent):void
+		protected function onTargetBtnMouseEvent(event:JGameStateEvent):void
 		{
 			event.currentTarget.removeEventListener(event.type,arguments.callee)
 			
@@ -164,22 +198,22 @@ package JsA.gameEngine
 			
 			switch(event.type)
 			{
-				case GameEvent.ADDED_TO_SOURCE:
+				case JGameStateEvent.ADDED_TO_SOURCE:
 					aRecorder.splice(currentID,1)
 					break
 				
-				case GameEvent.ADDED_TO_TARGET:
+				case JGameStateEvent.ADDED_TO_TARGET:
 					_n = currentID
 					_b = true
 					break
 				
-				case GameEvent.CHANGE_TO_TARGET:
+				case JGameStateEvent.CHANGE_TO_TARGET:
 					_n = existID
 					_b = true
 					sendEvent(_btn,event.type,_b,_n,true)
 					break;
 				
-				case GameEvent.RETURN_TO_SOURCE:
+				case JGameStateEvent.RETURN_TO_SOURCE:
 					_n = existID
 					aRecorder.splice(existID,1)
 					sendEvent(_btn,event.type,_b,_n,true)
@@ -190,25 +224,26 @@ package JsA.gameEngine
 		
 		
 		
-		protected function checkHitTestTarget():void
+		private function checkHitTest():Boolean
 		{
 			var _hitTest:Boolean
 			var _n:uint
-			for (var i:int = 0; i < aTarget.length; i++) 
+			var i:uint
+			for (i = 0; i < aTarget.length; i++) 
 			{
 				var _target:Group = aTarget[i]
 				if (currentBtn.hitTestObject(_target))
 				{
-					if (bHitTestQ)
+					if (_hitTestQ)
 					{
 						if (_target.hitTestPoint(_target.stage.mouseX,_target.stage.mouseY,true))
 						{
-							_n = i
+							currentID = i
 							_hitTest = true
 							break
 						}
 					}else{
-						_n = i
+						currentID = i
 						_hitTest = true
 						if (_target.hitTestPoint(_target.stage.mouseX,_target.stage.mouseY,true))
 						{
@@ -217,35 +252,42 @@ package JsA.gameEngine
 					}
 				}
 			}
+			return _hitTest
+		}
+		
+		protected function onCheckHitTestTarget():void
+		{
+			var _hitTest:Boolean
+			var i:uint
+			var _existCurrent:Boolean
+			
+			_hitTest = checkHitTest()
+			
+			
+			for (i = 0; i < aRecorder.length; i++) 
+			{
+				if(aRecorder[i].obj == currentBtn)
+				{
+					_existCurrent = true
+					_numCurrent = i
+					break
+				}
+			}
 			
 			if (_hitTest){
-				currentID = _n
 				
 				/** 占有在target，而需要要被動替換其他Button。所以需要對其操作只要使用該事件*/		
 				
 				var _return:Boolean
-				var _change:Boolean
 				
 				var _numCurrent:uint
 				var _numExist:uint
 				
 				var _existGroup:Group
-				var _currentGroup:Group
 				
 				for (i = 0; i < aRecorder.length; i++) 
 				{
-					if(aRecorder[i].obj == currentBtn)
-					{
-						_change = true
-						_numCurrent = i
-						_currentGroup = aRecorder[i].obj
-						break
-					}
-				}
-				
-				for (i = 0; i < aRecorder.length; i++) 
-				{
-					if(aRecorder[i].id == _n)
+					if(aRecorder[i].id == currentID)
 					{
 						_return = true
 						_numExist = i
@@ -255,7 +297,7 @@ package JsA.gameEngine
 					}
 				}
 				
-				if (_change)
+				if (_existCurrent)
 				{
 					/** target => target */
 					if (_existGroup)
@@ -263,32 +305,43 @@ package JsA.gameEngine
 						removeEvent(_existGroup)
 						aRecorder[_numExist].id = aRecorder[_numCurrent].id
 						existID = aRecorder[_numExist].id 
-						_existGroup.addEventListener(GameEvent.CHANGE_TO_TARGET,onTargetBtnMouseEvent)
+						_existGroup.addEventListener(JGameStateEvent.CHANGE_TO_TARGET,onTargetBtnMouseEvent)
 					}
 					aRecorder.splice(_numCurrent,1)
 				}else if (_return){
 					/** source => target */
 					removeEvent(_existGroup)
-					_existGroup.addEventListener(GameEvent.RETURN_TO_SOURCE,onTargetBtnMouseEvent)
+					_existGroup.addEventListener(JGameStateEvent.RETURN_TO_SOURCE,onTargetBtnMouseEvent)
 				}
 				
 				/** */
-				aRecorder.push(new MyItem(currentBtn,_n))	
+				aRecorder.push(new MyItem(currentBtn,currentID))	
 				
 				/** currentBtn => target */
-				sendEventCombox(GameEvent.ADDED_TO_TARGET,_hitTest,_n)
+				sendEventCombox(JGameStateEvent.ADDED_TO_TARGET,_hitTest,currentID)
+				
 			}else{
+				if (_existCurrent)
+					aRecorder.splice(_numCurrent,1)
+				
 				/** currentBtn => source */
-				sendEventCombox(GameEvent.ADDED_TO_SOURCE)
+				sendEventCombox(JGameStateEvent.ADDED_TO_SOURCE)
+			}
+			trace(aSource.length , aRecorder.length)
+			if(aSource.length == aRecorder.length)
+			{
+				if (currentBtn.hasEventListener(JGameEvent.FINISH))
+					currentBtn.dispatchEvent(new JGameEvent(JGameEvent.FINISH))
+				dispatchEvent(new JGameEvent(JGameEvent.FINISH))
 			}
 			
 			
 			function removeEvent(_group:Group):void
 			{
-				if (_group.hasEventListener(GameEvent.CHANGE_TO_TARGET))
-					_group.removeEventListener(GameEvent.CHANGE_TO_TARGET,onSourceBtnMouseEvent)
-				if (_group.hasEventListener(GameEvent.RETURN_TO_SOURCE))
-					_group.removeEventListener(GameEvent.RETURN_TO_SOURCE,onSourceBtnMouseEvent)
+				if (_group.hasEventListener(JGameStateEvent.CHANGE_TO_TARGET))
+					_group.removeEventListener(JGameStateEvent.CHANGE_TO_TARGET,onSourceBtnMouseEvent)
+				if (_group.hasEventListener(JGameStateEvent.RETURN_TO_SOURCE))
+					_group.removeEventListener(JGameStateEvent.RETURN_TO_SOURCE,onSourceBtnMouseEvent)
 			}
 			
 		}
@@ -297,9 +350,9 @@ package JsA.gameEngine
 		
 		protected function sendEvent(_target:UIComponent,_type:String,_hitTest:Boolean=false,_num:int= -1,_objThis:Boolean = true):void
 		{
-			var _event:GameEvent = new GameEvent(_type)
+			var _event:JGameStateEvent = new JGameStateEvent(_type)
 			_event._id = _num
-			_event._target = _target
+			_event._current = _target
 			_event._hitTest = _hitTest
 			if (_objThis)
 			{
@@ -319,9 +372,8 @@ package JsA.gameEngine
 			if (!currentBtn.hasEventListener(_type))
 			{
 				currentBtn.addEventListener(_type,onTargetBtnMouseEvent)
-				currentBtn.dispatchEvent(new GameEvent(_type))
+				currentBtn.dispatchEvent(new JGameStateEvent(_type))
 			}
-			
 			/** ctrl */
 			sendEvent(currentBtn,_type,_hitTest,_num)
 		}
@@ -345,6 +397,19 @@ package JsA.gameEngine
 			aRecorder = null
 			currentBtn = null
 			clearInterval(nTime)
+		}
+		
+		public function removeCurrent():void
+		{
+			var i:uint
+			for (i = 0; i < aRecorder.length; i++) 
+			{
+				if(aRecorder[i].obj == currentBtn)
+				{
+					aRecorder.splice(i,1)
+					break
+				}
+			}
 		}
 	}
 }

@@ -23,8 +23,8 @@ package JsF.components.scroller.ctrl
 	import JsC.events.JEvent;
 	import JsC.mvc.Controller;
 	
-	import JsF.components.scroller.viewer.JScroller;
-	import JsF.components.scroller.act.IScrollerDragePage;
+	import JsF.components.scroller.ext.JScroller;
+	import JsF.components.scroller.act.IScrollerDragPage;
 	import JsF.components.scroller.act.JScrollerActBase;
 	
 	
@@ -34,7 +34,7 @@ package JsF.components.scroller.ctrl
 	[Event(name="ADDED", type="JsC.events.JEvent")]
 	
 	
-	public class JScrollerCtrlDragPage extends Controller implements IScrollerDragePage
+	public class JScrollerCtrlDragAndLoadPage extends Controller implements IScrollerDragPage
 	{
 		
 		protected const actNormal:String = "actNormal"
@@ -60,7 +60,7 @@ package JsF.components.scroller.ctrl
 		protected var aniScroll:JScrollerCtrlAni
 		
 		
-		public function JScrollerCtrlDragPage(_ctrl:JScrollerActBase) 
+		public function JScrollerCtrlDragAndLoadPage(_ctrl:JScrollerActBase) 
 		{
 			scrollerCtrl = _ctrl;
 			scroller = scrollerCtrl._getScroller()

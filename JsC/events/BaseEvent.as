@@ -2,6 +2,8 @@ package JsC.events
 {
 	import flash.events.Event;
 	
+	import mx.core.UIComponent;
+	
 	import JsC.mvc.VO;
 
 	public class BaseEvent extends Event
@@ -47,14 +49,13 @@ package JsC.events
 		public var _array:Array;
 		public var _vector:Vector.<Object>
 		public var _vecotrVo:Vector.<VO>
+		public var _view:UIComponent
+		public var _compare:Boolean
 		
 		public function BaseEvent(type:String) 
 		{
 			super(type);
 		}
-		
-	
-		
 		
 		
 	}

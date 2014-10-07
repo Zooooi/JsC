@@ -9,6 +9,9 @@ package JsC.events
 		}
 		
 		
+		public static const VERSION:String = "VERSION"
+			
+			
 		//BASE---------------------------------------------------------------------
 		public static const INIT:String = "INIT"
 		public static const ONSTATE:String = "ONSTATE"
@@ -17,10 +20,19 @@ package JsC.events
 		public static const SUCCESS:String = "SUCCESS";
 		public static const ERROR:String = "ERROR";
 		public static const IOERROR:String = "IOERROR";
-		public static const DESTORY:String = "DESTORY";
 		
-		
+		// realtime --------------------------------------------------------------------
 		public static const RUN:String = "RUN"	
+		public static const RUN1:String = "RUN1"	
+		public static const RUN2:String = "RUN2"	
+		public static const RUN3:String = "RUN3"	
+			
+		// DESTORY --------------------------------------------------------------------
+		public static const DESTORY:String = "DESTORY";
+		public static const DESTORY_FROM_VIEW:String = "DESTORY_FROM_VIEW"	
+		public static const DESTORY_FROM_ACTION:String = "DESTORY_FROM_ACTION"	
+		public static const DESTORY_FROM_CTRL:String = "DESTORY_FROM_CTRL"	
+
 		public static const COMPLETE:String = "COMPLETE"	
 		public static const ALLCOMPLETE:String = "ALLCOMPLETE"	
 		public static const INIT_COMPLETE:String = "INIT_COMPLETE"	
@@ -60,6 +72,9 @@ package JsC.events
 		public static const CLOSE:String = "CLOSE"
 		public static const HITTEST:String = "HITTEST"
 		public static const STOP:String = "STOP"
+		public static const CHECK:String = "CHECK"
+		public static const CORRECT:String = "CORRECT"
+		public static const WRONG:String = "WRONG"
 		
 		//draw--------------------------------------------------------------------------
 		public static const DRAWING:String = "DRAWING"
@@ -78,6 +93,7 @@ package JsC.events
 		public static const DEL:String = "DEL"
 		public static const REMOVE:String = "REMOVE"	
 		public static const REMOVED:String = "REMOVED"	
+		public static const REMOVEALL:String = "REMOVEALL"	
 		public static const SELECT:String = "SELECT"
 		public static const DOWNLOAD:String = "DOWNLOAD"
 		public static const SAVE:String = "SAVE"
@@ -103,23 +119,11 @@ package JsC.events
 		public static const LOADER_PROGRESS:String = "LOADER_PROGRESS"
 		public static const LOADER_COMPLETE:String = "LOADER_COMPLETE"
 		
-		//Sound---------------------------------------------------------------------------
-		public static const SOUND_COMPLETE:String = "SOUND_COMPLETE"
-		public static const SOUND_UPDATE:String = "SOUND_UPDATE"
-		public static const SOUND_STOP:String = "SOUND_STOP"
-		public static const SOUND_PLAY:String = "SOUND_PLAY"
-		
 		//MouseEvent---------------------------------------------------------------------------
 		public static const CLICK:String = "JSCLICK"
 		public static const RESIZE:String = "JSRESIZE"
 		public static const MOVE:String = "JSMOVE"
-			
-		public static const ONMOUSEDW:String = "ONMOUSEDW"
-		public static const ONMOUSEUP:String = "ONMOUSEUP"
-		public static const ONMOUSEMV:String = "ONMOUSEMV"
-		public static const ONMOUSEOV:String = "ONMOUSEOV"
 		
-		//MouseEvent---------------------------------------------------------------------------
 		public static const ONLEFT:String = "ONLEFT"
 		public static const ONRIGHT:String = "ONRIGHT"
 		public static const ONTOP:String = "ONTOP"

@@ -9,8 +9,11 @@ package JsA.actionUI
 	import spark.components.HGroup;
 	import spark.components.VGroup;
 	
+	import JsC.events.JEvent;
 	import JsC.mvc.ActionUI;
 	
+	
+	[Event(name="RUN", type="JsC.events.JEvent")]
 	public class ActGroupVList extends ActionUI
 	{
 		
@@ -23,6 +26,7 @@ package JsA.actionUI
 		private var lastGroup:HGroup
 		
 		private var vUI:Vector.<UIComponent>
+		private var vViews:Vector.<UIComponent>
 		
 		private var nCount:uint
 		
@@ -36,6 +40,7 @@ package JsA.actionUI
 		{
 			nCount = 0
 			vUI = new Vector.<UIComponent>
+			vViews = new Vector.<UIComponent>
 			initView()
 		}
 		
@@ -64,7 +69,7 @@ package JsA.actionUI
 		public function addChild(_ui:UIComponent):void
 		{
 			vUI.push(_ui)
-				
+			getLastGroup()
 			if (!lastGroup.hasEventListener(ResizeEvent.RESIZE))
 			{
 				addChildAction()
@@ -77,6 +82,7 @@ package JsA.actionUI
 			if (vUI.length) 
 			{
 				var _ui:UIComponent = vUI.shift()
+				vViews.push(_ui)
 				lastGroup.addElement(_ui)
 				lastGroup.addEventListener(ResizeEvent.RESIZE,function(event:ResizeEvent):void{
 					lastGroup.removeEventListener(event.type,arguments.callee)
@@ -123,8 +129,11 @@ package JsA.actionUI
 									break
 								}
 							}else{
+								_currentGroup.addEventListener(Event.REMOVED_FROM_STAGE,function(event:Event):void{
+									event.currentTarget.removeEventListener(event.type,arguments.callee)
+									getLastGroup()
+								})
 								gr.removeElement(_currentGroup)
-								getLastGroup()
 								break
 							}
 							
@@ -132,17 +141,50 @@ package JsA.actionUI
 						}
 						_lastG = Group(gr.getElementAt(i))
 					}
+					var _index:uint = vViews.indexOf(_current)
+					vViews.splice(_index,1)
 					break;
 			}
 		}
 		
 		
 		
-		
+		public function getChildAt(_id:uint):UIComponent
+		{
+			return vViews[_id]
+		}
 		
 		public function removeChild(_ui:UIComponent):void
 		{
 			
+		}
+		
+		
+		public function getLength():uint
+		{
+			
+			return vViews.length
+			/*var _l:uint
+			for (var i:int = 0; i < gr.numElements; i++) 
+			{
+				for (var j:int = 0; j < HGroup(gr.getElementAt(i)).numElements; j++) 
+				{
+					_l++
+				}
+			}
+			return _l*/
+		}
+			
+		public function ergodic(_function:Function):void
+		{
+			addEventListener(JEvent.RUN,_function)
+			for (var i:int = 0; i < vViews.length; i++) 
+			{
+				var _event:JEvent = new JEvent(JEvent.RUN)
+				_event._view = vViews[i]
+				dispatchEvent(_event)
+			}
+			removeEventListener(JEvent.RUN,_function)
 		}
 		
 		

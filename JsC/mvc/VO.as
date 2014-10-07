@@ -1,11 +1,10 @@
 package JsC.mvc
 {
 	import JsC.sys.JObject;
+	import JsC.xml.XmlCtrl;
 	
-	[Bindable] dynamic public class VO extends Object
+	public dynamic class VO extends Object /** 暂时不要改为 Dictionary */
 	{
-		public var vL:Vector.<Object>
-		
 		public function VO(obj:Object = null)
 		{
 			if (obj !=null)
@@ -18,49 +17,8 @@ package JsC.mvc
 		{
 			for (var i:* in obj)
 			{
-				try
-				{
-					this[i] = obj[i]
-				} 
-				catch(error:Error) 
-				{
-					
-				}
-				
+				this[i] = obj[i]
 			}
-		}
-		
-		public function toArray(obj:Object):void
-		{
-			vL = new Vector.<Object>
-			for (var i:* in obj)
-			{
-				vL.push({name:i,content:obj[i]});
-			}
-		}
-		
-		public function v(_name:String):VO
-		{
-			var _vo:VO = new VO
-			_vo.fill(this[_name])
-			return _vo
-		}
-		
-		public function s(_name:String):String
-		{
-			return String(this[_name]);
-		}
-		
-		
-		public function a(_name:String):Array
-		{
-			return this[_name];
-		}
-		
-		
-		public function o(_obj:Object):String
-		{
-			return String(_obj);
 		}
 		
 		public function toObject():Object
@@ -76,5 +34,33 @@ package JsC.mvc
 			return vo
 		}
 		
+		public function delKey(_name:String):void
+		{
+			delete this[_name];
+		}
+		
+		public function copy(_vo:VO):void
+		{
+			for each(var s:String in _vo)
+			{
+				this[s] = _vo[s]
+			}
+		}
+		
+		public function _addVO(_vo:VO):void
+		{
+			
+		}
+		
+		public function fromXML(_xml:XML,_key:String):void
+		{
+			var _xmllist:XMLList = _xml[_key]
+			for (var i:int = 0; i < _xmllist.attributes().length(); i++) 
+			{
+				var _name:String = _xmllist.attributes()[i].localName()
+				this[_name] = _xmllist.attributes()[i]
+			}
+			
+		}
 	}
 }
